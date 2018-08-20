@@ -1,6 +1,16 @@
 import json
 
 
+_ds = None
+
+
+def get_datastore(filename="1x1-data"):
+    global _ds
+    if _ds is None:
+        _ds = DataStore(filename)
+    return _ds
+
+
 class DataStore:
 
     def __init__(self, filename):
