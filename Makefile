@@ -11,6 +11,9 @@ clean:
 list:
 	-find .
 
+check:
+	-pycodestyle 1x1/*.py
+
 devenv:
 	-virtualenv venv
 	-printf "\n*** Remember to start your venv, like this '. ./venv/bin/activate'\n\n"
