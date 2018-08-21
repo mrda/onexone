@@ -11,5 +11,13 @@ clean:
 list:
 	-find .
 
+devenv:
+	-virtualenv venv
+	-printf "\n*** Remember to start your venv, like this '. ./venv/bin/activate'\n\n"
+
+develop:
+	-python setup.py develop
+	-pip install -r requirements.txt
+
 all: tests
 
