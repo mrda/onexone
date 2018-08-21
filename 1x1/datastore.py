@@ -1,6 +1,5 @@
 import json
 
-
 _ds = None
 
 
@@ -9,6 +8,10 @@ def get_datastore(filename="1x1-data"):
     if _ds is None:
         _ds = DataStore(filename)
     return _ds
+
+
+def choose_location(filename):
+    ds = get_datastore(filename)
 
 
 class DataStore:
