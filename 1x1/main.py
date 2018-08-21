@@ -9,15 +9,16 @@ import command
 import datastore
 import person
 
-debug = False
-
 
 def main():
 
-    print("Welcome to 1x1")
-
     c = command.CommandOptions()
     c.add_command('person', person.person)
+
+    if len(sys.argv) == 1:
+        c.usage()
+        sys.exit(0)
+
     c.jump(*sys.argv[1:])
 
 
