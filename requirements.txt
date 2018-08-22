@@ -1,5 +1,4 @@
 appdirs
-flake8
 nose
 pathlib
 pycodestyle
