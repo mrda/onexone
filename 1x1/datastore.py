@@ -24,9 +24,15 @@ class DataStore:
     def new_entry(self, key, value=None):
         self.ds[key] = value
 
-    def list_entries(self):
+    def list_keys(self):
         for key in sorted(self.ds.iterkeys()):
             print(key)
+
+    def get_dict(self):
+        return self.ds
+
+    def get_value(self, key):
+        return self.ds[key]
 
     def save(self):
         with open(self.filename, "w") as f:

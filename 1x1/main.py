@@ -12,6 +12,8 @@ import command
 import datastore
 import person
 
+debug = False
+
 APP_NAME = '1x1'
 USER = os.environ.get('USER')
 CACHE_DIR = appdirs.user_config_dir(APP_NAME, USER)
@@ -32,7 +34,10 @@ def configure_datastore():
 
 def main():
 
-    c = command.CommandOptions()
+    if debug:
+        print("Data file location is {}".format(DATA_FILENAME))
+
+    c = command.CommandOptions(debug=debug)
     c.add_command('person', person.person)
 
     configure_datastore()
