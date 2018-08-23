@@ -21,7 +21,8 @@ def _print_person(nick):
     print("Last name: {}".format(dictionary['meta']['last_name']))
     print("Enabled?: {}".format(dictionary['meta']['enabled']))
     print("One-on-One Meetings:")
-    print("\n  ".join(dictionary['meetings']))
+    for entry in sorted(dictionary['meetings']):
+        print("  {}".format(entry))
 
 
 def _build_nick(*args):
@@ -112,6 +113,9 @@ def person(*args):
             _find(True, *remaining)
         elif command == 'info':
             _info(*remaining)
+        else:
+            # TODO(mrda): Help
+            None
 
     except Exception as e:
         print("Error in person: {}".format(e))
