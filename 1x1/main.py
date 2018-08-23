@@ -16,14 +16,14 @@ debug = False
 
 APP_NAME = '1x1'
 USER = os.environ.get('USER')
-CACHE_DIR = appdirs.user_config_dir(APP_NAME, USER)
-DATA_FILENAME = os.path.join(CACHE_DIR, '1x1-data.json')
+CONFIG_DIR = appdirs.user_config_dir(APP_NAME, USER)
+DATA_FILENAME = os.path.join(CONFIG_DIR, '1x1-data.json')
 
 
 def configure_datastore():
     # Initialise the location for stored data
     try:
-        pathlib.Path(CACHE_DIR).mkdir(parents=True)
+        pathlib.Path(CONFIG_DIR).mkdir(parents=True)
     except OSError as e:
         # Allow directory already exists to be squashed.
         # Otherwise allow it to bubble up
