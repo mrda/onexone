@@ -21,8 +21,8 @@ class DataStore:
         self.filename = filename
         self.load()
 
-    def new_entry(self, name):
-        self.ds[name] = None
+    def new_entry(self, key, value=None):
+        self.ds[key] = value
 
     def list_entries(self):
         for key in sorted(self.ds.iterkeys()):

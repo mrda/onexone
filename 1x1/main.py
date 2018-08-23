@@ -14,7 +14,7 @@ import person
 
 APP_NAME = '1x1'
 USER = os.environ.get('USER')
-CACHE_DIR = appdirs.user_cache_dir(APP_NAME, USER)
+CACHE_DIR = appdirs.user_config_dir(APP_NAME, USER)
 DATA_FILENAME = os.path.join(CACHE_DIR, '1x1-data.json')
 
 
