@@ -10,6 +10,7 @@ import sys
 
 import command
 import datastore
+import meeting
 import person
 
 debug = False
@@ -39,6 +40,7 @@ def main():
 
     c = command.CommandOptions(debug=debug)
     c.add_command('person', person.person)
+    c.add_command('meeting', meeting.meeting)
 
     configure_datastore()
 
