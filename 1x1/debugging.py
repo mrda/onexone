@@ -1,7 +1,7 @@
 import functools
 
 
-_debug = True
+_debug = False
 
 
 def trace(func):

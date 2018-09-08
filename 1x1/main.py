@@ -10,6 +10,7 @@ import sys
 
 import command
 import datastore
+import debugging
 import meeting
 import person
 
@@ -21,6 +22,7 @@ CONFIG_DIR = appdirs.user_config_dir(APP_NAME, USER)
 DATA_FILENAME = os.path.join(CONFIG_DIR, '1x1-data.json')
 
 
+@debugging.trace
 def configure_datastore():
     # Initialise the location for stored data
     try:
@@ -35,12 +37,10 @@ def configure_datastore():
 
 def main():
 
-    if debug:
-        print("Data file location is {}".format(DATA_FILENAME))
-
     c = command.CommandOptions(debug=debug)
-    c.add_command('person', person.person)
-    c.add_command('meeting', meeting.meeting)
+    p = person.Person()
+    c.add_command('person', p.parse, "<subcommand>")
+    c.add_command('meeting', meeting.meeting, "<subcommand>")
 
     configure_datastore()
 
@@ -48,7 +48,7 @@ def main():
         c.usage()
         sys.exit(0)
 
-    c.jump(*sys.argv[1:])
+    c.jump(sys.argv[1:])
 
 
 if __name__ == '__main__':

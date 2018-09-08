@@ -1,8 +1,14 @@
+import debugging
 import json
 
 _ds = None
 
 
+debug = False
+debugging._debug = debug
+
+
+@debugging.trace
 def get_datastore(filename="1x1-data"):
     global _ds
     if _ds is None:
@@ -16,6 +22,8 @@ def choose_location(filename):
 
 class DataStore:
 
+    _all_format = "{:>15} {:>15} {:>15}"
+
     def __init__(self, filename):
         self.ds = {}
         self.filename = filename
@@ -27,6 +35,16 @@ class DataStore:
     def list_keys(self):
         for key in sorted(self.ds.iterkeys()):
             print(key)
+
+    @debugging.trace
+    def list_everything(self):
+        print(DataStore._all_format.format(
+              "First Name", "Last Name", "Enabled?"))
+        for key in sorted(self.ds.iterkeys()):
+            print(DataStore._all_format.format(
+                  self.ds[key]['meta']['first_name'],
+                  self.ds[key]['meta']['last_name'],
+                  self.ds[key]['meta']['enabled']))
 
     def get_dict(self):
         return self.ds
