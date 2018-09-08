@@ -1,7 +1,11 @@
 
 import datastore
+import debugging
 
-debug = False
+debug = True
+
+
+debugging._debug = debug
 
 
 def _new_person(first=None, last=None, enabled=True):
@@ -97,9 +101,8 @@ def _info(*args):
     _print_person(nick)
 
 
+@debugging.trace
 def person(*args):
-    if debug:
-        print("Entering person: args={}".format(*args))
     command = args[0]
     remaining = args[1:]
     try:
