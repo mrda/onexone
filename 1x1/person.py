@@ -16,7 +16,6 @@ class Person:
         self.c.add_command('add', self.add, "<first> <last> [enabled]")
         self.c.add_command('find', self.find, "<search-string>")
         self.c.add_command('info', self.info, "<search-string>")
-        self.params = {}
 
     @debugging.trace
     def _is_match(self, candidate, wanted):
@@ -127,7 +126,7 @@ class Person:
     def add(self, args):
         len_args = len(args)
         if len_args < 2 or len_args > 3:
-            print("Valid params for add are " + self.params['add'])
+            self.c.display_usage('add')
             return
 
         if len_args == 2:
