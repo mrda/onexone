@@ -9,7 +9,6 @@ debugging._debug = debug
 
 class Person:
 
-    @debugging.trace
     def __init__(self):
         self.c = command.CommandOptions('person')
         self.c.add_command('list', self.list, "[all]")
@@ -54,18 +53,18 @@ class Person:
     @debugging.trace
     def _find(self, args, interactive=False):
         results = []
-        if len(args) != 1:
-            print("Spurious arguments to `person find`")
-        else:
-            result = self._search('first_name', args[0])
-            if result:
-                for r in result:
-                    results.append(r)
-            result = self._search('last_name', args[0])
-            if result:
-                for r in result:
-                    results.append(r)
-            return results
+
+        result = self._search('first_name', args[0])
+        if result:
+            for r in result:
+                results.append(r)
+
+        result = self._search('last_name', args[0])
+        if result:
+            for r in result:
+                results.append(r)
+
+        return results
 
     @debugging.trace
     def find(self, args):
