@@ -46,7 +46,8 @@ class CommandOptions:
             return
         print("Usage: {} {}".format(command, self.commands[command][1]))
 
-    def usage(self):
+    def usage(self, args=None):
+        # Note(mrda): Deliberately ignoring args
         if self.subcommand:
             print("Valid subcommands for '{}' are:".format(self.subcommand))
         else:

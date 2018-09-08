@@ -39,6 +39,7 @@ def main():
 
     c = command.CommandOptions(debug=debug)
     p = person.Person()
+    c.add_command('help', c.usage, "")
     c.add_command('person', p.parse, "<subcommand>")
     c.add_command('meeting', meeting.meeting, "<subcommand>")
 

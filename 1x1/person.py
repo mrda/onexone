@@ -15,7 +15,7 @@ class Person:
         self.c.add_command('list', self.list, "[all]")
         self.c.add_command('add', self.add, "<first> <last> [enabled]")
         self.c.add_command('find', self.find, "<search-string>")
-        self.c.add_command('info', self.info, "search-string>")
+        self.c.add_command('info', self.info, "<search-string>")
         self.params = {}
 
     @debugging.trace
@@ -70,6 +70,10 @@ class Person:
 
     @debugging.trace
     def find(self, args):
+        if len(args) != 1:
+            self.c.display_usage('find')
+            return
+
         results = self._find(args, True)
         if results:
             print("\n".join(results))
@@ -78,6 +82,10 @@ class Person:
 
     @debugging.trace
     def info(self, args):
+        if len(args) != 1:
+            self.c.display_usage('info')
+            return
+
         nick = self._find(args, False)
         if not nick:
             print("No record found")
@@ -117,8 +125,6 @@ class Person:
 
     @debugging.trace
     def add(self, args):
-        self.params['add'] = "<first> <last> [enabled]"
-
         len_args = len(args)
         if len_args < 2 or len_args > 3:
             print("Valid params for add are " + self.params['add'])
