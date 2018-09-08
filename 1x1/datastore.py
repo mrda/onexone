@@ -22,7 +22,7 @@ def choose_location(filename):
 
 class DataStore:
 
-    _all_format = "{:>15} {:>15} {:>15}"
+    _all_format = "{:>15} {:>15} {:>15} {:>15}"
 
     def __init__(self, filename):
         self.ds = {}
@@ -39,12 +39,17 @@ class DataStore:
     @debugging.trace
     def list_everything(self):
         print(DataStore._all_format.format(
-              "First Name", "Last Name", "Enabled?"))
+              "First Name", "Last Name", "Enabled?", "Last 1x1"))
         for key in sorted(self.ds.iterkeys()):
+            meetings = sorted(self.ds[key]['meetings'], reverse=True)
+            latest_meeting = None
+            if meetings:
+                latest_meeting = meetings[0]
             print(DataStore._all_format.format(
                   self.ds[key]['meta']['first_name'],
                   self.ds[key]['meta']['last_name'],
-                  self.ds[key]['meta']['enabled']))
+                  self.ds[key]['meta']['enabled'],
+                  latest_meeting))
 
     def get_dict(self):
         return self.ds
