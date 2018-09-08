@@ -1,53 +1,49 @@
 
+import command
 import datastore
+import debugging
 import person
 
 debug = False
+debugging._debug = debug
 
 
-def _meeting_add(*args):
-    if len(args) != 2:
-        print("Wrong number of arguments to `meeting add`")
-        return
+class Meeting:
 
-    try:
-        nickstr = args[0]
-        datestr = args[1]
+    def __init__(self):
+        self.c = command.CommandOptions('meeting')
+        self.c.add_command('add', self.add, "<person> <date>")
+        self.p = person.Person()
 
+    @debugging.trace
+    def add(self, args):
+        len_args = len(args)
+        if len_args != 2:
+            self.c.display_usage('add')
+            return
+
+        name = args[0]
+        meeting = args[1]
+        matches = self.p._find([name], False)
+        if not matches:
+            print("Can't find '{}'".format(name))
+            return
+        if len(matches) > 1:
+            print("Multiple persons found: {}".format(matches))
+            return
+        # Note(mrda): Shouldn't be playing with the internals of
+        # entries here.  We need code to abstract this
         ds = datastore.get_datastore()
         dictionary = ds.get_dict()
-
-        # TODO(mrda): fixme.  We shouldn't be calling person here
-        # We need code that handles the internal representation
-        # of the 1x1 people and meetings
-        nick = person._find(False, nickstr)
-        dictionary[nick]['meetings'].append(datestr)
-
+        dictionary[matches[0]]['meetings'].append(meeting)
         ds.save()
-    except Exception as e:
-        print("An exception got raised, {}".format(e))
 
-
-def meeting(*args):
-    if debug:
-        print("Entering meeting: args={}".format(*args))
-    command = args[0]
-    remaining = args[1:]
-    try:
-        ds = datastore.get_datastore()
-        if command == 'add':
-            _meeting_add(*remaining)
-
-        # elif command == 'delete':
-        #    None
-        # elif command == 'latest':
-        #    # Show the latest meetings for all staff
-        #    None
-        # elif command == 'help':
-        #    None
-        else:
-            # TODO(mrda): Help
-            None
-
-    except Exception as e:
-        print("Error in meeting: {}".format(e))
+    @debugging.trace
+    def parse(self, args):
+        try:
+            if len(args) == 0:
+                self.c.usage()
+                return
+            self.c.jump(args)
+        except Exception as e:
+            print("*** Unexpected exception in meeting.parse: {}".format(e))
