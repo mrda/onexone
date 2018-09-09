@@ -68,6 +68,18 @@ class Person:
         return results
 
     @debugging.trace
+    def find_person(self, person_str):
+        # Note(mrda): Not used yet
+        possible_persons = self._find([person_str])
+        len_possible_persons = len(possible_persons)
+        if len_possible_persons == 0:
+            return (None, "No match found")
+        elif len_possible_persons != 1:
+            return (None, "No unique match found")
+        else:
+            return (True, possible_persons[0])
+
+    @debugging.trace
     def _exact_match(self, first, last):
 
         first_result = self._search('first_name', first)
