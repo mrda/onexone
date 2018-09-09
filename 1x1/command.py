@@ -1,4 +1,5 @@
 import debugging
+import utils
 
 
 class CommandOptions:
@@ -48,6 +49,7 @@ class CommandOptions:
 
     def usage(self, args=None):
         # Note(mrda): Deliberately ignoring args
+        utils.display_program_header()
         if self.subcommand:
             print("Valid subcommands for '{}' are:".format(self.subcommand))
         else:

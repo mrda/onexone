@@ -13,6 +13,8 @@ import datastore
 import debugging
 import meeting
 import person
+import utils
+
 
 debug = False
 
@@ -37,8 +39,12 @@ def configure_datastore():
 
 def main():
 
+    utils.register_name("1x1")
+    utils.register_years("2018")
+
     c = command.CommandOptions(debug=debug)
     c.add_command('help', c.usage, "")
+    c.add_command('version', utils.display_program_header, "")
     p = person.Person()
     c.add_command('person', p.parse, "<subcommand>")
     m = meeting.Meeting()
