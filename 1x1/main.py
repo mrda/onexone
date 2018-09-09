@@ -23,6 +23,9 @@ USER = os.environ.get('USER')
 CONFIG_DIR = appdirs.user_config_dir(APP_NAME, USER)
 DATA_FILENAME = os.path.join(CONFIG_DIR, '1x1-data.json')
 
+utils.register_name(APP_NAME)
+utils.register_years("2018")
+
 
 @debugging.trace
 def configure_datastore():
@@ -38,9 +41,6 @@ def configure_datastore():
 
 
 def main():
-
-    utils.register_name("1x1")
-    utils.register_years("2018")
 
     c = command.CommandOptions(debug=debug)
     c.add_command('help', c.usage, "")
