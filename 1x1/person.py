@@ -13,6 +13,7 @@ class Person:
         self.c = command.CommandOptions('person')
         self.c.add_command('list', self.list, "[all]")
         self.c.add_command('add', self.add, "<first> <last> [enabled]")
+        self.c.add_command('delete', self.delete, "(<first> <last> | <nick>)")
         self.c.add_command('find', self.find, "<search-string>")
         self.c.add_command('info', self.info, "<search-string>")
 
@@ -65,6 +66,21 @@ class Person:
                 results.append(r)
 
         return results
+
+    @debugging.trace
+    def _exact_match(self, first, last):
+
+        first_result = self._search('first_name', first)
+        if not first_result:
+            return False
+
+        last_result = self._search('last_name', last)
+        if not last_result:
+            return False
+
+        intersection = [v for v in first_result if v in last_result]
+
+        return len(intersection) == 1
 
     @debugging.trace
     def find(self, args):
@@ -137,6 +153,34 @@ class Person:
         ds = datastore.get_datastore()
         ds.new_entry(self._build_nick(args),
                      self._new_person(first, last, enabled))
+        ds.save()
+
+    @debugging.trace
+    def delete(self, args):
+        len_args = len(args)
+        if len_args < 1 or len_args > 2:
+            self.c.display_usage('delete')
+            return
+
+        nick = None
+        if len_args == 1:
+            # Partial user supplied, go find a match
+            nick = self._find(args)
+            if len(nick) == 0:
+                print("Couldn't find person '{}' to delete".format(args[0]))
+                return
+            elif len(nick) != 1:
+                print("Multiple matches, won't delete {}".format(
+                      " and ".join(nick)))
+                return
+        else:
+            # Provided a first and last name, looking for an exact match
+            first, last = args
+            if self._exact_match(first, last):
+                nick = self._build_nick((first, last))
+
+        ds = datastore.get_datastore()
+        ds.remove_entry(nick[0])
         ds.save()
 
     @debugging.trace

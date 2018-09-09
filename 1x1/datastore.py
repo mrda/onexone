@@ -32,6 +32,10 @@ class DataStore:
     def new_entry(self, key, value=None):
         self.ds[key] = value
 
+    def remove_entry(self, key):
+        # Note(mrda): No error if key isn't in dict
+        self.ds.pop(key, None)
+
     def list_keys(self):
         for key in sorted(self.ds.iterkeys()):
             print(key)
