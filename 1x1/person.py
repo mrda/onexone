@@ -179,6 +179,11 @@ class Person:
             if self._exact_match(first, last):
                 nick = self._build_nick((first, last))
 
+        if raw_input("Are you sure you want to delete '{}'? ".
+           format(nick[0])) not in ['Y', 'y']:
+            print("Not deleting user")
+            return
+
         ds = datastore.get_datastore()
         ds.remove_entry(nick[0])
         ds.save()
