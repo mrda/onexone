@@ -61,6 +61,9 @@ class DataStore:
     def get_value(self, key):
         return self.ds[key]
 
+    def get_meetings(self, key):
+        return self.ds[key]['meetings']
+
     def save(self):
         with open(self.filename, "w") as f:
             json.dump(self.ds, f)
