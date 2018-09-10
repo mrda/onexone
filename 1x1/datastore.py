@@ -22,7 +22,9 @@ def choose_location(filename):
 
 class DataStore:
 
-    _all_format = "{:>15} {:>15} {:>15} {:>15}"
+    # Note(mrda): Need to force booleans to be displayed as strings, so that
+    # 'True' is printed instead of '1'.
+    _all_format = "{:>15} {:>15} {!s:>15} {:>15}"
 
     def __init__(self, filename):
         self.ds = {}
@@ -36,9 +38,10 @@ class DataStore:
         # Note(mrda): No error if key isn't in dict
         self.ds.pop(key, None)
 
-    def list_keys(self):
+    def list_keys(self, enabled=True):
         for key in sorted(self.ds.iterkeys()):
-            print(key)
+            if self.ds[key]['meta']['enabled'] == enabled:
+                print(key)
 
     @debugging.trace
     def list_everything(self):

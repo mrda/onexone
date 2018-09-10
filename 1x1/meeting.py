@@ -60,9 +60,12 @@ class Meeting:
         ds = datastore.get_datastore()
         last_meeting = {}
         for nick in ds.ds.keys():
+            if not self.p.is_enabled(nick):
+                continue
             mtg = self.get_latest_meeting(nick)
             if not mtg:
                 mtg = 0
+
             last_meeting[nick] = mtg
 
         # Sort list in reverse chronological order
@@ -81,11 +84,12 @@ class Meeting:
         print(format_str.format("Name", max_name_len, "Last 1x1"))
         print(format_str.format("----", max_name_len, "--------"))
         for pm in people_meetings:
-            meeting = "never"
-            if pm[1] != 0:
-                meeting = pm[1]
-
-            print(format_str.format(pm[0], max_name_len, meeting))
+            # TODO(mrda): Resolve why this needs to be compared to True
+            if self.p.is_enabled(pm[0]) == True:
+                meeting = "never"
+                if pm[1] != 0:
+                    meeting = pm[1]
+                print(format_str.format(pm[0], max_name_len, meeting))
 
     @debugging.trace
     def parse(self, args):

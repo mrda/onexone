@@ -107,6 +107,12 @@ class Person:
             print("No match found")
 
     @debugging.trace
+    def is_enabled(self, nick):
+        ds = datastore.get_datastore()
+        dictionary = ds.get_value(nick)
+        return dictionary['meta']['enabled']
+
+    @debugging.trace
     def info(self, args):
         if len(args) != 1:
             self.c.display_usage('info')
@@ -147,6 +153,7 @@ class Person:
         p['meta']['first_name'] = first
         p['meta']['last_name'] = last
         p['meetings'] = ()
+
         return p
 
     @debugging.trace
