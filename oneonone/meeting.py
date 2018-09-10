@@ -85,7 +85,7 @@ class Meeting:
         print(format_str.format("----", max_name_len, "-------------"))
         for pm in people_meetings:
             # TODO(mrda): Resolve why this needs to be compared to True
-            if self.p.is_enabled(pm[0]) == True:
+            if self.p.is_enabled(pm[0]) is True:
                 meeting = "never"
                 if pm[1] != 0:
                     meeting = pm[1]
