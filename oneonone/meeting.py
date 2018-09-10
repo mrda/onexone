@@ -41,7 +41,7 @@ class Meeting:
 
     @debugging.trace
     def get_latest_meeting(self, nick):
-        """ Given a nick find the last 1x1 meeting they had"""
+        """ Given a nick find the last oneonone meeting they had"""
         ds = datastore.get_datastore()
 
         mtgs = ds.get_meetings(nick)
@@ -53,7 +53,7 @@ class Meeting:
 
     @debugging.trace
     def up_next(self, args):
-        """ Find the next people who are up next for a 1x1 """
+        """ Find the next people who are up next for a oneonone """
         # Note(mrda): Ignoring args
 
         # Get the latest meeting slot for each person who is enabled
@@ -81,8 +81,8 @@ class Meeting:
             if len(pm[0]) > max_name_len:
                 max_name_len = len(pm[0])
 
-        print(format_str.format("Name", max_name_len, "Last 1x1"))
-        print(format_str.format("----", max_name_len, "--------"))
+        print(format_str.format("Name", max_name_len, "Last OneOnOne"))
+        print(format_str.format("----", max_name_len, "-------------"))
         for pm in people_meetings:
             # TODO(mrda): Resolve why this needs to be compared to True
             if self.p.is_enabled(pm[0]) == True:

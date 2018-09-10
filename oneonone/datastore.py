@@ -9,7 +9,7 @@ debugging._debug = debug
 
 
 @debugging.trace
-def get_datastore(filename="1x1-data"):
+def get_datastore(filename="oneonone-data"):
     global _ds
     if _ds is None:
         _ds = DataStore(filename)
@@ -46,7 +46,7 @@ class DataStore:
     @debugging.trace
     def list_everything(self):
         print(DataStore._all_format.format(
-              "First Name", "Last Name", "Enabled?", "Last 1x1"))
+              "First Name", "Last Name", "Enabled?", "Last OneOnOne"))
         for key in sorted(self.ds.iterkeys()):
             meetings = sorted(self.ds[key]['meetings'], reverse=True)
             latest_meeting = None

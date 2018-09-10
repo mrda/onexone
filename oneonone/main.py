@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# main.py - main entry point for 1x1
+# main.py - main entry point for OneOnOne
 #
 
 import appdirs
@@ -18,10 +18,10 @@ import utils
 
 debug = False
 
-APP_NAME = '1x1'
+APP_NAME = 'oneonone'
 USER = os.environ.get('USER')
 CONFIG_DIR = appdirs.user_config_dir(APP_NAME, USER)
-DATA_FILENAME = os.path.join(CONFIG_DIR, '1x1-data.json')
+DATA_FILENAME = os.path.join(CONFIG_DIR, 'oneonone-data.json')
 
 utils.register_name(APP_NAME)
 utils.register_years("2018")
