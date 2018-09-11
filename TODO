@@ -1,0 +1,17 @@
+Add more tests
+Add dated json file backups
+... and backup rotations
+Add date validation logic
+Add duplicate date detection & prevention
+Add deplicate person detection & prevention
+Add person nicknames, which are searchable/specifiable for cmdline operations
+Add actions for each meeting - date/who/what/status
+Add action completion/status update
+Add meeting deletion
+Move the internal data structure to be inside datasore.py
+Add the ability to convert the stored data into oneonone commandlines (for replayability)
+Add stats for how long between meetings/how many meetings per person etc
+Add exclusion days for people (i.e. Tash doesn't work Wednesdays)
+Take the next step with up-next, and build a 'schedule' command that takes the next 'n' people, and schedule them on workdays
+Add an 'action' subcommand to manipulate actions
+Add datafile version, which is examined on load, and migrations can occur if required
