@@ -41,7 +41,7 @@ class Meeting:
 
     @debugging.trace
     def get_latest_meeting(self, nick):
-        """ Given a nick find the last oneonone meeting they had"""
+        """ Given a nick find the last onexone meeting they had"""
         ds = datastore.get_datastore()
 
         mtgs = ds.get_meetings(nick)
@@ -53,7 +53,7 @@ class Meeting:
 
     @debugging.trace
     def up_next(self, args):
-        """ Find the next people who are up next for a oneonone """
+        """ Find the next people who are up next for a onexone """
         # Note(mrda): Ignoring args
 
         # Get the latest meeting slot for each person who is enabled

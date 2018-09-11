@@ -6,7 +6,7 @@ list:
 	-find .
 
 check:
-	-pycodestyle oneonone/*.py
+	-pycodestyle onexone/*.py
 
 venv: venv/bin/activate
 

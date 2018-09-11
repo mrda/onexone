@@ -21,6 +21,6 @@ def display_program_header(args=None):
     c = "Copyright (C) {} Michael Davies <michael-{}@the-davies.net>".format(
         _years, _name)
     print("{} Version {}  {}".format(_name,
-                                     pkg_resources.require("oneonone")[0]
+                                     pkg_resources.require("onexone")[0]
                                      .version,
                                      c))

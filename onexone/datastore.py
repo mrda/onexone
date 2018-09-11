@@ -9,7 +9,7 @@ debugging._debug = debug
 
 
 @debugging.trace
-def get_datastore(filename="oneonone-data"):
+def get_datastore(filename="onexone-data"):
     global _ds
     if _ds is None:
         _ds = DataStore(filename)

@@ -1,10 +1,10 @@
 import unittest
-import oneonone.person
+import onexone.person
 
 class TestPerson(unittest.TestCase):
 
     def setUp(self):
-        self.p = oneonone.person.Person()
+        self.p = onexone.person.Person()
 
     def test__is_match_matches(self):
         self.assertTrue(self.p._is_match('banana', 'banana'))

@@ -1,11 +1,11 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='oneonone',
+    name='onexone',
     version='0.1',
     packages=find_packages(),
     entry_points={
         'console_scripts':
-            ['oneonone = oneonone.main:main']
+            ['onexone = onexone.main:main']
         }
     )

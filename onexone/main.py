@@ -18,10 +18,10 @@ import utils
 
 debug = False
 
-APP_NAME = 'oneonone'
+APP_NAME = 'onexone'
 USER = os.environ.get('USER')
 CONFIG_DIR = appdirs.user_config_dir(APP_NAME, USER)
-DATA_FILENAME = os.path.join(CONFIG_DIR, 'oneonone-data.json')
+DATA_FILENAME = os.path.join(CONFIG_DIR, 'onexone-data.json')
 
 utils.register_name(APP_NAME)
 utils.register_years("2018")
