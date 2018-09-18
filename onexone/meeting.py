@@ -1,3 +1,24 @@
+#!/usr/bin/env python
+#
+# meeting - Representation of a meeting, part of onexone
+#
+# Copyright (C) 2018 Michael Davies <michael@the-davies.net>
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+# 02111-1307, USA.
+#
 
 import command
 import datastore
@@ -9,6 +30,7 @@ debugging._debug = debug
 
 
 class Meeting:
+    """Representation of a meeting."""
 
     def __init__(self):
         self.c = command.CommandOptions('meeting')
@@ -19,6 +41,11 @@ class Meeting:
 
     @debugging.trace
     def add(self, args):
+        """Add a meeting to a person.
+
+        :param person: a match string of a person
+        :param meeting: the meeting date to add
+        """
         len_args = len(args)
         if len_args != 2:
             self.c.display_usage('add')
@@ -42,6 +69,11 @@ class Meeting:
 
     @debugging.trace
     def delete(self, args):
+        """Delete a meeting from a person.
+
+        :param person: a match string of a person
+        :param meeting: the meeting date to delete
+        """
         len_args = len(args)
         if len_args != 2:
             self.c.display_usage('delete')
@@ -62,15 +94,19 @@ class Meeting:
         dictionary = ds.get_dict()
         all_meetings = dictionary[matches[0]]['meetings']
         if meeting not in all_meetings:
-            print("Couldn't find {} in {}'s list of meetings".format(meeting, person))
+            print("Couldn't find {} in {}'s list of meetings".
+                  format(meeting, person))
             return
-        cleaned = [ x for x in all_meetings if x != meeting ]
+        cleaned = [x for x in all_meetings if x != meeting]
         dictionary[matches[0]]['meetings'] = cleaned
         ds.save()
 
     @debugging.trace
     def get_latest_meeting(self, nick):
-        """ Given a nick find the last onexone meeting they had"""
+        """Find the last meeting a person had.
+
+        :param: nick the person to search
+        """
         ds = datastore.get_datastore()
 
         mtgs = ds.get_meetings(nick)
@@ -82,7 +118,10 @@ class Meeting:
 
     @debugging.trace
     def up_next(self, args):
-        """ Find the next people who are up next for a onexone """
+        """ Find the next person who are up next for a meeting.
+
+        :param args: ignored
+        """
         # Note(mrda): Ignoring args
 
         # Get the latest meeting slot for each person who is enabled
@@ -122,6 +161,11 @@ class Meeting:
 
     @debugging.trace
     def parse(self, args):
+        """Top level function to parse arguments given to the meeting command.
+        If the meeting sub-command isn't recognised, print out usage.  Note
+        that this command is only meant to be invoked from higher level parsing
+        function.
+        """
         try:
             if len(args) == 0:
                 self.c.usage()

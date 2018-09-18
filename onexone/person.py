@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# person - Representation of a person
+# person - Representation of a person, part of onexone
 #
 # Copyright (C) 2018 Michael Davies <michael@the-davies.net>
 #
