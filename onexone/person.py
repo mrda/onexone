@@ -89,27 +89,31 @@ class Person:
             return None
 
     @debugging.trace
-    def _find(self, args, interactive=False):
+    def _find(self, searchstr, interactive=False):
         """Search for a person based upon name, matching against the supplied
         string search criteria.
 
-        :param args: the search string to look for
+        :param searchstr: the search string to find a name match against
         :param interactive: not used
         :returns: The list of persons that match
         """
         results = []
 
-        result = self._search('first_name', args[0])
+        result = self._search('first_name', searchstr)
         if result:
             for r in result:
                 results.append(r)
 
-        result = self._search('last_name', args[0])
+        result = self._search('last_name', searchstr)
         if result:
             for r in result:
                 results.append(r)
 
-        # TODO(mrda): Should search against nick as well
+        # Search against fullname as well
+        all_fullnames = datastore.get_datastore().get_all_fullnames()
+        for fullname in all_fullnames:
+            if searchstr in fullname:
+                results.append(fullname)
 
         return results
 
@@ -192,12 +196,13 @@ class Person:
             self.c.display_usage('info')
             return
 
-        nick = self._find(args, False)
-        if not nick:
+        searchstr = args[0]
+        fullname = self._find(searchstr, False)
+        if not fullname:
             print("No record found")
             return
-        for n in nick:
-            self._print_person(n)
+        for f in fullname:
+            self._print_person(f)
         print("")
 
     @debugging.trace
@@ -217,15 +222,15 @@ class Person:
             print("  {}".format(entry))
 
     @debugging.trace
-    def _build_nick(self, args):
-        """Build a nick from the supplied (first, last) list.
+    def _build_fullname(self, args):
+        """Build a fullname from the supplied (first, last) list.
 
         :param args: a list of (first, last)
         """
-        nick = None if args[0] is None else args[0]
+        fullname = None if args[0] is None else args[0]
         if len(args) > 1:
-            nick += args[1]
-        return nick
+            fullname += args[1]
+        return fullname
 
     @debugging.trace
     def _new_person(self, first=None, last=None, enabled=True):
@@ -264,7 +269,7 @@ class Person:
             first, last, enabled = args
 
         ds = datastore.get_datastore()
-        ds.new_entry(self._build_nick(args),
+        ds.new_entry(self._build_fullname(args),
                      self._new_person(first, last, enabled))
         ds.save()
 
@@ -294,7 +299,7 @@ class Person:
             # Provided a first and last name, looking for an exact match
             first, last = args
             if self._exact_match(first, last):
-                nick = self._build_nick((first, last))
+                nick = self._build_fullname((first, last))
 
         if raw_input("Are you sure you want to delete '{}'? ".
            format(nick[0])) not in ['Y', 'y']:

@@ -64,6 +64,10 @@ class DataStore:
     def get_value(self, key):
         return self.ds[key]
 
+    def get_all_fullnames(self):
+        """Return all fullnames as a list."""
+        return list(self.ds.keys())
+
     def get_meetings(self, key):
         return self.ds[key]['meetings']
 
