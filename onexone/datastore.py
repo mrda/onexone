@@ -26,6 +26,12 @@ class DataStore:
     # 'True' is printed instead of '1'.
     _all_format = "{:>15} {:>15} {!s:>15} {:>15}"
 
+    _ds_version = {
+        'major': 1,
+        'minor': 0,
+        'patch': 0,
+    }
+
     def __init__(self, filename):
         self.ds = {}
         self.filename = filename
@@ -37,6 +43,17 @@ class DataStore:
     def remove_entry(self, key):
         # Note(mrda): No error if key isn't in dict
         self.ds.pop(key, None)
+
+    def version(self):
+        return "{}.{}.{}".format(DataStore._ds_version['major'],
+                                 DataStore._ds_version['minor'],
+                                 DataStore._ds_version['patch'])
+
+    def major_version(self):
+        return DataStore._ds_version['major']
+
+    def minor_version(self):
+        return DataStore._ds_version['minor']
 
     def list_keys(self, enabled=True):
         for key in sorted(self.ds.iterkeys()):
