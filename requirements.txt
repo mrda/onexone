@@ -1,4 +1,5 @@
 appdirs
+mock
 nose
 pathlib
 pycodestyle

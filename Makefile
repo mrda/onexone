@@ -20,8 +20,8 @@ develop:
 	python setup.py develop
 
 tests: venv
-	printf "\n*** Remember to start your venv, like this '. ./venv/bin/activate'\nbefore running tests\n\n"
-	${NOSE}
+	printf "\n*** Remember to start your venv, like this '. ./venv/bin/activate'\n*** before running tests\n\n"
+	${NOSE} -s
 
 clean:
 	rm -rf venv
