@@ -34,6 +34,7 @@ class Person:
         self.c = command.CommandOptions('person')
         self.c.add_command('list', self.list, "[all]")
         self.c.add_command('add', self.add, "<first> <last> [enabled]")
+        self.c.add_command('enable', self.enable, "<searchstr> <enabled>")
         self.c.add_command('delete', self.delete, "(<first> <last> | <nick>)")
         self.c.add_command('find', self.find, "<search-string>")
         self.c.add_command('info', self.info, "<search-string>")
@@ -97,25 +98,25 @@ class Person:
         :param interactive: not used
         :returns: The list of persons that match
         """
-        results = []
+        results = set()
 
         result = self._search('first_name', searchstr)
         if result:
             for r in result:
-                results.append(r)
+                results.add(r)
 
         result = self._search('last_name', searchstr)
         if result:
             for r in result:
-                results.append(r)
+                results.add(r)
 
         # Search against fullname as well
         all_fullnames = datastore.get_datastore().get_all_fullnames()
         for fullname in all_fullnames:
             if searchstr in fullname:
-                results.append(fullname)
+                results.add(fullname)
 
-        return results
+        return list(results)
 
     @debugging.trace
     def find_person(self, person_str):
@@ -197,7 +198,9 @@ class Person:
             return
 
         searchstr = args[0]
+        print("Searching for {}".format(args[0]))
         fullname = self._find(searchstr, False)
+        print("Found fullname")
         if not fullname:
             print("No record found")
             return
@@ -325,6 +328,41 @@ class Person:
             ds.list_everything()
         else:
             self.c.display_usage('list')
+
+    @debugging.trace
+    def enable(self, args):
+        """Top level function to enable/disable a person.
+
+        :param args: only two params are supported a person and enabled
+        """
+        len_args = len(args)
+        if len_args != 2:
+            self.c.display_usage('enable')
+            return
+
+        person = args[0]
+        fullname = self._find(args[0])
+        if len(fullname) == 0:
+            print("Couldn't find person '{}' to delete".format(args[0]))
+            return
+        elif len(fullname) != 1:
+            print("Multiple matches, won't delete {}".format(
+                  " and ".join(fullname)))
+            return
+
+        enabled = str(args[1]).lower()
+        if enabled == 'true':
+            enabled = True
+        elif enabled == 'false':
+            enabled = False
+        else:
+            self.c.display_usage('enable')
+            return
+
+        print("{} to {}".format(person, enabled))
+        return
+        ds = datastore.get_datastore()
+        ds.set_enabled(fullname, enabled)
 
     @debugging.trace
     def parse(self, args):

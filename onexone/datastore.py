@@ -81,6 +81,10 @@ class DataStore:
     def get_value(self, key):
         return self.ds[key]
 
+    def set_enabled(self, fullname, enabled):
+        self.ds[fullname]['meta']['enabled'] = enabled
+        self.save()
+
     def get_all_fullnames(self):
         """Return all fullnames as a list."""
         return list(self.ds.keys())
