@@ -128,7 +128,7 @@ class Meeting:
         ds = datastore.get_datastore()
         last_meeting = {}
         for nick in ds.ds.keys():
-            if not self.p.is_enabled(nick):
+            if not ds.is_enabled(nick):
                 continue
             mtg = self.get_latest_meeting(nick)
             if not mtg:
@@ -153,7 +153,7 @@ class Meeting:
         print(format_str.format("----", max_name_len, "-------------"))
         for pm in people_meetings:
             # TODO(mrda): Resolve why this needs to be compared to True
-            if self.p.is_enabled(pm[0]) is True:
+            if ds.is_enabled(pm[0]) is True:
                 meeting = "never"
                 if pm[1] != 0:
                     meeting = pm[1]
