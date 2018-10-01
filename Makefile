@@ -1,31 +1,35 @@
 NOSE=nosetests
+VENV = ./venv
 
-.PHONY: all tests clean list
+.PHONY: all build-env check-env check develop tests clean 
 
-list:
-	-find .
+all: build-env check-env check develop tests
 
-check:
+build-env: | $(VENV)
+	@echo "--- Found $(VENV)"
+	. venv/bin/activate; pip install -Ur requirements.txt
+
+$(VENV):
+	@echo "*** $(VENV) doesn't exist"
+	virtualenv venv	
+
+check-env:
+	@if [ "z$(VIRTUAL_ENV)" = "z" ]; then \
+            printf "***\n*** Remember to start your virtualenv,\n*** like this '. ./venv/bin/activate'\n***\n"; \
+            exit 2; \
+        else true; fi
+
+check: check-env
 	-pycodestyle onexone/*.py
 
-venv: venv/bin/activate
-
-venv/bin/activate: requirements.txt
-	test -d venv || virtualenv venv
-	. venv/bin/activate; pip install -Ur requirements.txt
-	touch venv/bin/activate
-	printf "\n*** Remember to start your venv, like this '. ./venv/bin/activate'\n*** And then you can 'make develop'\n\n"
-
-develop:
+develop: check-env
 	python setup.py develop
 
-tests: venv
-	printf "\n*** Remember to start your venv, like this '. ./venv/bin/activate'\n*** before running tests\n\n"
+tests: check-env
 	${NOSE} -s
 
 clean:
 	rm -rf venv
 	find . -iname "*.pyc" -o -iname "*.pyo" -o -iname "*.so" -o -iname "#*#" -delete
 
-all: tests
 
