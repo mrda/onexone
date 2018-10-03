@@ -109,10 +109,6 @@ class DataStore:
                   latest_meeting))
 
     # notested
-    def get_dict(self):
-        return self.ds
-
-    # notested
     def get_value(self, key):
         return self.ds[key]
 
@@ -207,6 +203,38 @@ class DataStore:
         if person_idxs:
             return person_idxs
         return None
+
+    # nottested
+    def add_meeting(self, person, meeting_date):
+        """Add a meeting to the supplied person.
+
+        :param person: the person to add the meeting to
+        :param meeting_date: the date of the meeting to add
+        :returns: the success of the addition
+        """
+        # TODO(mrda): validate meeting_date
+        self.ds[self._PEOPLE][person][self._MEETINGS].append(meeting_date)
+        self.save()
+        return True
+
+    # nottested
+    def delete_meeting(self, person, meeting_date):
+        """Delete a meeting from a person.
+
+        :param person: the person to delete the meeting from
+        :param meeting_date: the date of the meeting
+        :returns: the success of the addition
+        """
+        # TODO(mrda): validate meeting_date
+        all_meeting_dates = self.ds[self._PEOPLE][person][self._MEETINGS]
+        if meeting_date not in all_meeting_dates:
+            print("Couldn't find {} in {}'s list of meetings".
+                  format(meeting_date, person))
+            return False
+        cleaned = [x for x in all_meeting_dates if x != meeting_date]
+        self.ds[self._PEOPLE][person][self._MEETINGS] = cleaned
+        self.save()
+        return True
 
     # notested
     def dump(self):
