@@ -5,7 +5,6 @@ import onexone.datastore
 
 class TestDataStore(unittest.TestCase):
 
-
     def _make_person(self, fullname, firstname, lastname, enabled):
         # Test helper function
         person = {
@@ -14,9 +13,12 @@ class TestDataStore(unittest.TestCase):
                          'last_name': lastname,
                          'enabled': enabled,
                          },
-                 'meetings': [],
+                 'meetings': None,
                  }
         self.ds.ds['people'][fullname] = person
+
+    def _add_meetings(self, fullname, meetings_list):
+        self.ds.ds['people'][fullname]['meetings'] = meetings_list
 
     @mock.patch('onexone.datastore.DataStore.load', create=True)
     def setUp(self, mock_load):
@@ -30,8 +32,14 @@ class TestDataStore(unittest.TestCase):
                      'people': {},
                      }
         self._make_person('JohnCitizen', 'John', 'Citizen', True)
+        self._add_meetings('JohnCitizen', ['20181003'])
+
         self._make_person('JaneSmith', 'Jane', 'Smith', False)
+        self._add_meetings('JaneSmith', ['20180907', '20181003'])
+
         self._make_person('CarlosSmith', 'Carlos', 'Smith', True)
+
+        self._make_person('FredFlintstone', 'Fred', 'Flintstone', True)
 
     # TODO(mrda): Tests for new_entry
 
@@ -43,7 +51,7 @@ class TestDataStore(unittest.TestCase):
 
     # Tests for list_keys
     def test_list_fullnames_enabled(self):
-        self.assertItemsEqual(['JohnCitizen', 'CarlosSmith'],
+        self.assertItemsEqual(['JohnCitizen', 'CarlosSmith', 'FredFlintstone'],
                               self.ds.list_fullnames())
 
     def test_list_fullnames_disabled(self):
@@ -60,10 +68,37 @@ class TestDataStore(unittest.TestCase):
     def test__is_match_doesnt_match(self):
         self.assertFalse(self.ds._is_match('banana', 'bananarama'))
 
-    # TODO(mrda): Tests for get_dict
-    # Note(mrda): get_dict should be removed
-
     # TODO(mrda): Tests for get_value
+
+    # Tests for name functions
+    def test_get_firstname_success(self):
+        self.assertEquals('Carlos', self.ds.get_first_name('CarlosSmith'))
+
+    def test_get_firstname_fail(self):
+        self.assertEquals(None, self.ds.get_first_name('NonExistantPerson'))
+
+    def test_get_lastname_success(self):
+        self.assertEquals('Citizen', self.ds.get_last_name('JohnCitizen'))
+
+    def test_get_firstname_fail(self):
+        self.assertEquals(None, self.ds.get_last_name('NonExistantPerson'))
+
+    # Tests for get_meetings
+    def test_get_meetings_single_success(self):
+        self.assertEquals(['20181003'],
+                          self.ds.get_meetings('JohnCitizen'))
+
+    def test_get_meetings_mutiple_success(self):
+        self.assertItemsEqual(['20181003', '20180907'],
+                              self.ds.get_meetings('JaneSmith'))
+
+    def test_get_meetings_no_meetings_success(self):
+        self.assertEquals(None,
+                          self.ds.get_meetings('FredFlintstone'))
+
+    def test_get_meetings_no_such_person(self):
+        self.assertEquals(None,
+                          self.ds.get_meetings('NonExistantPerson'))
 
     # Tests for person enabled functions
     def test_is_enabled(self):
@@ -98,7 +133,7 @@ class TestDataStore(unittest.TestCase):
         self.assertEqual(['JaneSmith'], self.ds.find('enabled', False))
 
     def test_find_match_enabled_true(self):
-        self.assertItemsEqual(['JohnCitizen', 'CarlosSmith'],
+        self.assertItemsEqual(['JohnCitizen', 'CarlosSmith', 'FredFlintstone'],
                               self.ds.find('enabled', True))
 
     # TODO(mrda): Tests for get_all_fullnames
@@ -108,5 +143,9 @@ class TestDataStore(unittest.TestCase):
     # TODO(mrda): Tests for save
 
     # TODO(mrda): Tests for load
+
+    # TODO(mrda): Tests for add_meeting
+
+    # TODO(mrda): Tests for delete_meeting
 
     # TODO(mrda): Tests for dump
