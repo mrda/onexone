@@ -173,20 +173,26 @@ class DataStore:
 
         return False
 
-    # nottested
     @debugging.trace
     def get_first_name(self, fullname):
-        return self.ds[self._PEOPLE][fullname][self._META][self._FIRST]
+        try:
+            return self.ds[self._PEOPLE][fullname][self._META][self._FIRST]
+        except KeyError:
+            return None
 
-    # nottested
     @debugging.trace
     def get_last_name(self, fullname):
-        return self.ds[self._PEOPLE][fullname][self._META][self._LAST]
+        try:
+            return self.ds[self._PEOPLE][fullname][self._META][self._LAST]
+        except KeyError:
+            return None
 
-    # nottested
     @debugging.trace
     def get_meetings(self, fullname):
-        return self.ds[self._PEOPLE][fullname][self._MEETINGS]
+        try:
+            return self.ds[self._PEOPLE][fullname][self._MEETINGS]
+        except KeyError:
+            return None
 
     @debugging.trace
     def find(self, field, value):
