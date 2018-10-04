@@ -70,7 +70,6 @@ class DataStore:
                                  DataStore._ds_version['minor'],
                                  DataStore._ds_version['patch'])
 
-    # notested
     def _set_info(self):
         self.ds[self._INFO][self._VERSION] = self._make_version()
         self.ds[self._INFO][self._FILENAME] = self.filename
@@ -78,7 +77,6 @@ class DataStore:
     def version(self):
         return self.ds[self._INFO][self._VERSION]
 
-    # notested
     def list_fullnames(self, enabled=True):
         keys = set()
         for key in sorted(self.ds[self._PEOPLE].iterkeys()):
@@ -91,40 +89,41 @@ class DataStore:
 
         return keys
 
-    # notested
     @debugging.trace
     def list_everything(self):
-        print(DataStore._all_format.format(
-              "First Name", "Last Name", "Enabled?", "Last OneOnOne"))
+        output = DataStore._all_format.format(
+              "First Name", "Last Name", "Enabled?", "Last OneOnOne")
+        output += "\n"
         for key in sorted(self.ds[self._PEOPLE].iterkeys()):
             meetings = sorted(self.ds[self._PEOPLE][key][self._MEETINGS],
                               reverse=True)
             latest_meeting = None
             if meetings:
                 latest_meeting = meetings[0]
-            print(DataStore._all_format.format(
+            output += DataStore._all_format.format(
                   self.ds[self._PEOPLE][key][self._META][self._FIRST],
                   self.ds[self._PEOPLE][key][self._META][self._LAST],
                   self.ds[self._PEOPLE][key][self._META][self._ENABLED],
-                  latest_meeting))
-
-    # notested
-    def get_value(self, key):
-        return self.ds[key]
+                  latest_meeting)
+            output += "\n"
+        return output
 
     def is_enabled(self, fullname):
+        """Check to see if a person is enabled.
+
+        :param fullname: the name to check
+        :returns: Return true if the person is enabled
+        """
         return self.ds[self._PEOPLE][fullname][self._META][self._ENABLED]
 
     def set_enabled(self, fullname, enabled=True):
         self.ds[self._PEOPLE][fullname][self._META][self._ENABLED] = enabled
         self.save()
 
-    # notested
     def get_all_fullnames(self):
         """Return all fullnames as a list."""
-        return list(self.ds.keys())
+        return list(self.ds[self._PEOPLE].keys())
 
-    # notested
     def get_meetings(self, key):
         return self.ds[key][self._MEETINGS]
 
@@ -242,7 +241,6 @@ class DataStore:
         self.save()
         return True
 
-    # notested
     def dump(self):
         print("Dumping data")
         print self.ds
