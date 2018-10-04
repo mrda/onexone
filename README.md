@@ -14,7 +14,7 @@ If this is your first time, it will prompt you to do the following:
 
 Once you've started the virtual environment, just start over:
 
-    make develop
+    make
 
 ## CLI Usage
 
