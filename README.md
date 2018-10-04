@@ -4,11 +4,17 @@ A simple command-line tool to help people managers herd the cats.
 
 ## Quick Start
 
-    make venv
+To build a start environment, just do the following:
+
+    make
+    
+If this is your first time, it will prompt you to do the following:
+
     . ./venv/bin/activate
+
+Once you've started the virtual environment, just start over:
+
     make develop
-    make check
-    make tests
 
 ## CLI Usage
 
