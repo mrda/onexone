@@ -13,7 +13,7 @@ class TestDataStore(unittest.TestCase):
                          'last_name': lastname,
                          'enabled': enabled,
                          },
-                 'meetings': None,
+                 'meetings': [],
                  }
         self.ds.ds['people'][fullname] = person
 
@@ -41,15 +41,11 @@ class TestDataStore(unittest.TestCase):
 
         self._make_person('FredFlintstone', 'Fred', 'Flintstone', True)
 
-    # TODO(mrda): Tests for new_entry
-
-    # TODO(mrda): Tests for remove_entry
-
     # Tests for version functions
     def test_version(self):
         self.assertEquals('9.3.6', self.ds.version())
 
-    # Tests for list_keys
+    # Tests for list_fullnames
     def test_list_fullnames_enabled(self):
         self.assertItemsEqual(['JohnCitizen', 'CarlosSmith', 'FredFlintstone'],
                               self.ds.list_fullnames())
@@ -58,17 +54,24 @@ class TestDataStore(unittest.TestCase):
         self.assertItemsEqual(['JaneSmith'],
                               self.ds.list_fullnames(False))
 
-    # TODO(mrda): Tests for list_everything
+    # Tests for list_everything
+    def test_list_everything(self):
+        fm = "{:>15} {:>15} {!s:>15} {:>15}"
+        expected = fm.format('First Name', 'Last Name', 'Enabled?',
+                             'Last OneOnOne') + '\n'
+        expected += fm.format('Carlos', 'Smith', True, None) + '\n'
+        expected += fm.format('Fred', 'Flintstone', True, None) + '\n'
+        expected += fm.format('Jane', 'Smith', False, '20181003') + '\n'
+        expected += fm.format('John', 'Citizen', True, '20181003') + '\n'
+        self.assertEqual(expected, self.ds.list_everything())
 
-    # TODO(mrda): Tests for find and _is_match
+    # Tests for find and _is_match
     def test__is_match_matches(self):
         self.assertTrue(self.ds._is_match('banana', 'banana'))
         self.assertTrue(self.ds._is_match('bananarama', 'banana'))
 
     def test__is_match_doesnt_match(self):
         self.assertFalse(self.ds._is_match('banana', 'bananarama'))
-
-    # TODO(mrda): Tests for get_value
 
     # Tests for name functions
     def test_get_firstname_success(self):
@@ -93,7 +96,7 @@ class TestDataStore(unittest.TestCase):
                               self.ds.get_meetings('JaneSmith'))
 
     def test_get_meetings_no_meetings_success(self):
-        self.assertEquals(None,
+        self.assertEquals([],
                           self.ds.get_meetings('FredFlintstone'))
 
     def test_get_meetings_no_such_person(self):
@@ -136,9 +139,15 @@ class TestDataStore(unittest.TestCase):
         self.assertItemsEqual(['JohnCitizen', 'CarlosSmith', 'FredFlintstone'],
                               self.ds.find('enabled', True))
 
-    # TODO(mrda): Tests for get_all_fullnames
+    # Test for get_all_fullnames
+    def test_get_all_fullnames(self):
+        self.assertItemsEqual(['JaneSmith', 'CarlosSmith', 'FredFlintstone',
+                              'JohnCitizen'],
+                              self.ds.get_all_fullnames())
 
-    # TODO(mrda): Tests for get_meetings
+    # TODO(mrda): Tests for new_entry
+
+    # TODO(mrda): Tests for remove_entry
 
     # TODO(mrda): Tests for save
 
@@ -147,5 +156,3 @@ class TestDataStore(unittest.TestCase):
     # TODO(mrda): Tests for add_meeting
 
     # TODO(mrda): Tests for delete_meeting
-
-    # TODO(mrda): Tests for dump

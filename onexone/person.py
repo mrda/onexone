@@ -137,17 +137,6 @@ class Person:
             print("No match found")
 
     @debugging.trace
-    def is_enabled(self, nick):
-        """Check to see if a person is enabled.
-
-        :param nick: the nick to check
-        :returns: Return true if the person is enabled
-        """
-        ds = datastore.get_datastore()
-        dictionary = ds.get_value(nick)
-        return dictionary['meta']['enabled']
-
-    @debugging.trace
     def info(self, args):
         """Top level info command.  Find a person based up on the supplied
         criteria, and print all relevant information.
@@ -287,7 +276,7 @@ class Person:
             if fullnames is not None:
                 print("\n".join(ds.list_fullnames()))
         elif len_args == 1 and args[0] == 'all':
-            ds.list_everything()
+            print(ds.list_everything())
         else:
             self.c.display_usage('list')
 
