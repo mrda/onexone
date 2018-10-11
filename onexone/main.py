@@ -19,9 +19,10 @@ import utils
 debug = False
 
 APP_NAME = 'onexone'
+SAVE_FILE = 'onexone-data.json'
 USER = os.environ.get('USER')
 CONFIG_DIR = appdirs.user_config_dir(APP_NAME, USER)
-DATA_FILENAME = os.path.join(CONFIG_DIR, 'onexone-data.json')
+DATA_FILENAME = os.path.join(CONFIG_DIR, SAVE_FILE)
 
 utils.register_name(APP_NAME)
 utils.register_years("2018")
