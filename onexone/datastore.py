@@ -260,4 +260,4 @@ class DataStore:
 
     def dump(self):
         print("Dumping data")
-        print self.ds
+        print(self.ds)

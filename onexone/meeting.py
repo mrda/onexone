@@ -129,7 +129,7 @@ class Meeting:
 
         # Sort list in reverse chronological order
         people_meetings = sorted(last_meeting.iteritems(),
-                                 key=lambda (k, v): (v, k))
+                                 key=lambda k, v: (v, k))
 
         # Display
         format_str = "{:>{}}  {:>8}"
