@@ -1,8 +1,9 @@
+
 import datetime
 import json
 import os
 
-import debugging
+from onexone import debugging
 
 _ds = None
 
@@ -82,7 +83,7 @@ class DataStore:
 
     def list_fullnames(self, enabled=True):
         keys = set()
-        for key in sorted(self.ds[self._PEOPLE].iterkeys()):
+        for key in sorted(self.ds[self._PEOPLE].keys()):
             if self.ds[self._PEOPLE][key][self._META][self._ENABLED] == \
                enabled:
                 keys.add(key)
@@ -97,10 +98,10 @@ class DataStore:
         output = DataStore._all_format.format(
               "First Name", "Last Name", "Enabled?", "Last OneOnOne")
         output += "\n"
-        for key in sorted(self.ds[self._PEOPLE].iterkeys()):
+        for key in sorted(self.ds[self._PEOPLE].keys()):
             meetings = sorted(self.ds[self._PEOPLE][key][self._MEETINGS],
                               reverse=True)
-            latest_meeting = None
+            latest_meeting = ''
             if meetings:
                 latest_meeting = meetings[0]
             output += DataStore._all_format.format(
@@ -219,7 +220,7 @@ class DataStore:
         :returns: a list of person_idx that match
         """
         person_idxs = []
-        for person_idx, d in self.ds[self._PEOPLE].iteritems():
+        for person_idx, d in self.ds[self._PEOPLE].items():
             if self._is_match(d[self._META][field], value):
                 person_idxs.append(person_idx)
         if person_idxs:

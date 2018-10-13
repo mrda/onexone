@@ -1,17 +1,30 @@
 NOSE=nosetests
 VENV = ./venv
+VENV3 = ./venv3
 
 .PHONY: all build-env check-env check develop tests clean 
 
-all: build-env check-env check develop tests
+all: py2
+
+py2: build-env check-env check develop tests
+
+py3: build-env3 check-env check develop tests
 
 build-env: | $(VENV)
 	@echo "--- Found $(VENV)"
 	. venv/bin/activate; pip install -Ur requirements.txt
 
+build-env3: | $(VENV3)
+	@echo "--- Found $(VENV3)"
+	. venv/bin/activate; pip install -Ur requirements.txt
+
 $(VENV):
 	@echo "*** $(VENV) doesn't exist"
 	virtualenv venv	
+
+$(VENV3):
+	@echo "*** $(VENV3) doesn't exist"
+	python3 -m venv venv
 
 check-env:
 	@if [ "z$(VIRTUAL_ENV)" = "z" ]; then \

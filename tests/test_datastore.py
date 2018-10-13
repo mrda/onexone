@@ -1,4 +1,5 @@
 import mock
+import six
 import unittest
 
 import onexone.datastore
@@ -47,20 +48,22 @@ class TestDataStore(unittest.TestCase):
 
     # Tests for list_fullnames
     def test_list_fullnames_enabled(self):
-        self.assertItemsEqual(['JohnCitizen', 'CarlosSmith', 'FredFlintstone'],
-                              self.ds.list_fullnames())
+        six.assertCountEqual(self,
+                             ['JohnCitizen', 'CarlosSmith', 'FredFlintstone'],
+                             self.ds.list_fullnames())
 
     def test_list_fullnames_disabled(self):
-        self.assertItemsEqual(['JaneSmith'],
-                              self.ds.list_fullnames(False))
+        six.assertCountEqual(self,
+                             ['JaneSmith'],
+                             self.ds.list_fullnames(False))
 
     # Tests for list_everything
     def test_list_everything(self):
         fm = "{:>15} {:>15} {!s:>15} {:>15}"
         expected = fm.format('First Name', 'Last Name', 'Enabled?',
                              'Last OneOnOne') + '\n'
-        expected += fm.format('Carlos', 'Smith', True, None) + '\n'
-        expected += fm.format('Fred', 'Flintstone', True, None) + '\n'
+        expected += fm.format('Carlos', 'Smith', True, '') + '\n'
+        expected += fm.format('Fred', 'Flintstone', True, '') + '\n'
         expected += fm.format('Jane', 'Smith', False, '20181003') + '\n'
         expected += fm.format('John', 'Citizen', True, '20181003') + '\n'
         self.assertEqual(expected, self.ds.list_everything())
@@ -92,8 +95,9 @@ class TestDataStore(unittest.TestCase):
                           self.ds.get_meetings('JohnCitizen'))
 
     def test_get_meetings_mutiple_success(self):
-        self.assertItemsEqual(['20181003', '20180907'],
-                              self.ds.get_meetings('JaneSmith'))
+        six.assertCountEqual(self,
+                             ['20181003', '20180907'],
+                             self.ds.get_meetings('JaneSmith'))
 
     def test_get_meetings_no_meetings_success(self):
         self.assertEquals([],
@@ -129,21 +133,24 @@ class TestDataStore(unittest.TestCase):
         self.assertEqual(None, self.ds.find('first_name', 'Rupert'))
 
     def test_find_match_multiple(self):
-        self.assertItemsEqual(['JaneSmith', 'CarlosSmith'],
-                              self.ds.find('last_name', 'Smith'))
+        six.assertCountEqual(self, 
+                             ['JaneSmith', 'CarlosSmith'],
+                             self.ds.find('last_name', 'Smith'))
 
     def test_find_match_enabled_false(self):
         self.assertEqual(['JaneSmith'], self.ds.find('enabled', False))
 
     def test_find_match_enabled_true(self):
-        self.assertItemsEqual(['JohnCitizen', 'CarlosSmith', 'FredFlintstone'],
-                              self.ds.find('enabled', True))
+        six.assertCountEqual(self,
+                             ['JohnCitizen', 'CarlosSmith', 'FredFlintstone'],
+                             self.ds.find('enabled', True))
 
     # Test for get_all_fullnames
     def test_get_all_fullnames(self):
-        self.assertItemsEqual(['JaneSmith', 'CarlosSmith', 'FredFlintstone',
-                              'JohnCitizen'],
-                              self.ds.get_all_fullnames())
+        six.assertCountEqual(self,
+                             ['JaneSmith', 'CarlosSmith', 'FredFlintstone',
+                             'JohnCitizen'],
+                             self.ds.get_all_fullnames())
 
     # TODO(mrda): Tests for new_entry
 
