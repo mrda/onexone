@@ -19,9 +19,9 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 # 02111-1307, USA.
 #
-import command
-import datastore
-import debugging
+from onexone import command
+from onexone import datastore
+from onexone import debugging
 
 debug = False
 debugging._debug = debug

@@ -1,5 +1,5 @@
-import debugging
-import utils
+from onexone import debugging
+from onexone import utils
 
 
 class CommandOptions:

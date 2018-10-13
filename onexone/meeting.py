@@ -20,10 +20,10 @@
 # 02111-1307, USA.
 #
 
-import command
-import datastore
-import debugging
-import person
+from onexone import command
+from onexone import datastore
+from onexone import debugging
+from onexone import person
 
 debug = False
 debugging._debug = debug

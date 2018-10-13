@@ -8,12 +8,12 @@ import os
 import pathlib
 import sys
 
-import command
-import datastore
-import debugging
-import meeting
-import person
-import utils
+from onexone import command
+from onexone import datastore
+from onexone import debugging
+from onexone import meeting
+from onexone import person
+from onexone import utils
 
 
 debug = False
@@ -36,7 +36,7 @@ def configure_datastore():
     except OSError as e:
         # Allow directory already exists to be squashed.
         # Otherwise allow it to bubble up
-        if e.errno != os.errno.EEXIST:
+        if e.errorcode != os.errno.EEXIST:
             raise
     ds = datastore.choose_location(DATA_FILENAME)
 
