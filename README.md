@@ -1,5 +1,7 @@
 # One on One
 
+[![Build Status](https://travis-ci.com/mrda/onexone.svg?branch=master)](https://travis-ci.com/mrda/onexone)
+
 A simple command-line tool to help people managers herd the cats.
 
 ## Quick Start
