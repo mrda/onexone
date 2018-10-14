@@ -37,6 +37,7 @@ check-env:
 
 check: check-env
 	-pycodestyle onexone/*.py
+	-pycodestyle tests/*.py
 
 develop: check-env
 	python setup.py develop
