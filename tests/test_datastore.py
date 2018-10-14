@@ -3,6 +3,8 @@ import six
 import sys
 import unittest
 
+import onexone.datastore
+
 # Handle py2/3 and mock differences
 if sys.version_info.major == 3:
     from unittest import mock
@@ -10,9 +12,6 @@ else:
     # Expect the `mock` package for python 2.
     # https://pypi.python.org/pypi/mock
     import mock
-
-import onexone.datastore
-
 
 
 class TestDataStore(unittest.TestCase):
@@ -38,8 +37,8 @@ class TestDataStore(unittest.TestCase):
         self.ds = onexone.datastore.get_datastore(fn)
         self.ds.ds = {
                      'info': {
-                             'version' : '9.3.6',
-                             'name' : fn,
+                             'version': '9.3.6',
+                             'name': fn,
                              },
                      'people': {},
                      }
@@ -144,7 +143,7 @@ class TestDataStore(unittest.TestCase):
         self.assertEqual(None, self.ds.find('first_name', 'Rupert'))
 
     def test_find_match_multiple(self):
-        six.assertCountEqual(self, 
+        six.assertCountEqual(self,
                              ['JaneSmith', 'CarlosSmith'],
                              self.ds.find('last_name', 'Smith'))
 
@@ -160,7 +159,7 @@ class TestDataStore(unittest.TestCase):
     def test_get_all_fullnames(self):
         six.assertCountEqual(self,
                              ['JaneSmith', 'CarlosSmith', 'FredFlintstone',
-                             'JohnCitizen'],
+                              'JohnCitizen'],
                              self.ds.get_all_fullnames())
 
     # TODO(mrda): Tests for new_entry
@@ -190,9 +189,8 @@ class TestDataStore(unittest.TestCase):
         mock_open = mock.mock_open(read_data=mock_data)
         with mock.patch('{}.open'.format(builtin_module_name),
                         mock_open,
-                        create=False
-                       ):
-            self.ds.load(test_filename);
+                        create=False):
+            self.ds.load(test_filename)
 
         self.assertEqual(
             self.ds.ds,
@@ -223,9 +221,8 @@ class TestDataStore(unittest.TestCase):
         mock_open = mock.mock_open(read_data=mock_data)
         with mock.patch('{}.open'.format(builtin_module_name),
                         mock_open,
-                        create=False
-                       ):
-            self.ds.load(test_filename);
+                        create=False):
+            self.ds.load(test_filename)
 
         self.assertEqual(
             self.ds.ds,
@@ -249,9 +246,8 @@ class TestDataStore(unittest.TestCase):
         mock_open.side_effect = IOError()
         with mock.patch('{}.open'.format(builtin_module_name),
                         mock_open,
-                        create=False
-                       ):
-            self.ds.load('dont care');
+                        create=False):
+            self.ds.load('dont care')
 
         self.assertEqual(
             self.ds.ds,
