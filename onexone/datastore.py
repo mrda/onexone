@@ -68,7 +68,6 @@ class DataStore:
         # Note(mrda): No error if key isn't in dict
         self.ds[self._PEOPLE].pop(key, None)
 
-    # notested
     def _make_version(self):
         return "{}.{}.{}".format(DataStore._ds_version['major'],
                                  DataStore._ds_version['minor'],

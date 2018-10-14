@@ -1,8 +1,19 @@
-import mock
+import json
 import six
+import sys
 import unittest
 
+# Handle py2/3 and mock differences
+if sys.version_info.major == 3:
+    from unittest import mock
+else:
+    # Expect the `mock` package for python 2.
+    # https://pypi.python.org/pypi/mock
+    import mock
+
 import onexone.datastore
+
+
 
 class TestDataStore(unittest.TestCase):
 
@@ -158,7 +169,96 @@ class TestDataStore(unittest.TestCase):
 
     # TODO(mrda): Tests for save
 
-    # TODO(mrda): Tests for load
+    @mock.patch('onexone.datastore.DataStore.build_savefile', create=True)
+    @mock.patch('onexone.datastore.DataStore.save', create=True)
+    def test_load_with_backup(self, mock_save, mock_build_savefile):
+
+        # Thanks https://gist.github.com/ViktorovEugene/27d76ad2d94c88170d7b
+
+        test_filename = "qwertyuiop"
+        dated_test_filename = "asdfghjkl"
+        mock_build_savefile.return_value = dated_test_filename
+
+        # Get a appropriate "builtin" module name for py 2/3
+        if sys.version_info.major == 3:
+            builtin_module_name = 'builtins'
+        else:
+            builtin_module_name = '__builtin__'
+
+        mock_data = '{"info": {"version": "1.0.0"}}'
+
+        mock_open = mock.mock_open(read_data=mock_data)
+        with mock.patch('{}.open'.format(builtin_module_name),
+                        mock_open,
+                        create=False
+                       ):
+            self.ds.load(test_filename);
+
+        self.assertEqual(
+            self.ds.ds,
+            json.loads(mock_data),
+            'Mocked `open` should return `mock_data` test value!'
+        )
+
+        mock_build_savefile.assert_called_once_with(test_filename)
+        mock_save.assert_called_once_with(dated_test_filename)
+        mock_open.assert_called_once_with(test_filename, 'r')
+
+    @mock.patch('os.path.isfile', create=True)
+    @mock.patch('onexone.datastore.DataStore.build_savefile', create=True)
+    @mock.patch('onexone.datastore.DataStore.save', create=True)
+    def test_load_with_no_backup(self, mock_save, mock_build_savefile,
+                                 mock_is_file):
+        test_filename = "qwertyuiop"
+        mock_is_file.return_value = True
+
+        # Get a appropriate "builtin" module name for py 2/3
+        if sys.version_info.major == 3:
+            builtin_module_name = 'builtins'
+        else:
+            builtin_module_name = '__builtin__'
+
+        mock_data = '{"info": {"version": "1.0.0"}}'
+
+        mock_open = mock.mock_open(read_data=mock_data)
+        with mock.patch('{}.open'.format(builtin_module_name),
+                        mock_open,
+                        create=False
+                       ):
+            self.ds.load(test_filename);
+
+        self.assertEqual(
+            self.ds.ds,
+            json.loads(mock_data),
+            'Mocked `open` should return `mock_data` test value!'
+        )
+
+        mock_build_savefile.assert_called_once_with(test_filename)
+        mock_open.assert_called_once_with(test_filename, 'r')
+        self.assertEqual(0, mock_save.call_count)
+
+    @mock.patch('onexone.datastore.DataStore.save', create=True)
+    def test_load_ioerror(self, mock_save):
+        # Get a appropriate "builtin" module name for py 2/3
+        if sys.version_info.major == 3:
+            builtin_module_name = 'builtins'
+        else:
+            builtin_module_name = '__builtin__'
+
+        mock_open = mock.mock_open()
+        mock_open.side_effect = IOError()
+        with mock.patch('{}.open'.format(builtin_module_name),
+                        mock_open,
+                        create=False
+                       ):
+            self.ds.load('dont care');
+
+        self.assertEqual(
+            self.ds.ds,
+            self.ds._empty_store,
+            'IOError means the datastpore should be zeroed')
+
+        self.assertEqual(0, mock_save.call_count)
 
     # TODO(mrda): Tests for add_meeting
 
