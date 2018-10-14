@@ -1,5 +1,5 @@
-import debugging
-import utils
+from onexone import debugging
+from onexone import utils
 
 
 class CommandOptions:
@@ -39,7 +39,7 @@ class CommandOptions:
 
     def show_jumptable(self):
         print("==== Jump table ====")
-        print self.commands
+        print(self.commands)
 
     def display_usage(self, command):
         if command not in self.commands:

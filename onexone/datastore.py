@@ -1,5 +1,9 @@
-import debugging
+
+import datetime
 import json
+import os
+
+from onexone import debugging
 
 _ds = None
 
@@ -78,7 +82,7 @@ class DataStore:
 
     def list_fullnames(self, enabled=True):
         keys = set()
-        for key in sorted(self.ds[self._PEOPLE].iterkeys()):
+        for key in sorted(self.ds[self._PEOPLE].keys()):
             if self.ds[self._PEOPLE][key][self._META][self._ENABLED] == \
                enabled:
                 keys.add(key)
@@ -93,10 +97,10 @@ class DataStore:
         output = DataStore._all_format.format(
               "First Name", "Last Name", "Enabled?", "Last OneOnOne")
         output += "\n"
-        for key in sorted(self.ds[self._PEOPLE].iterkeys()):
+        for key in sorted(self.ds[self._PEOPLE].keys()):
             meetings = sorted(self.ds[self._PEOPLE][key][self._MEETINGS],
                               reverse=True)
-            latest_meeting = None
+            latest_meeting = ''
             if meetings:
                 latest_meeting = meetings[0]
             output += DataStore._all_format.format(
@@ -117,7 +121,7 @@ class DataStore:
 
     def set_enabled(self, fullname, enabled=True):
         self.ds[self._PEOPLE][fullname][self._META][self._ENABLED] = enabled
-        self.save()
+        self.save(self.filename)
 
     def get_all_fullnames(self):
         """Return all fullnames as a list."""
@@ -127,16 +131,30 @@ class DataStore:
         return self.ds[key][self._MEETINGS]
 
     # notested
-    def save(self):
-        with open(self.filename, "w") as f:
+    def save(self, filename):
+        with open(filename, "w") as f:
             json.dump(self.ds, f)
+
+    # notested
+    def build_savefile(self, filename):
+        fmt = '%Y%m%d'
+        today = datetime.date.today()
+        return "{}-{}".format(filename, today.strftime(fmt))
 
     # notested
     def load(self, filename):
         try:
             with open(filename, "r") as f:
                 self.ds = json.load(f)
+
+            # Now that the file successfully opened, let's save a copy before
+            # we do anything as a backup if we don't have one for today already
+            backup_filename = self.build_savefile(filename)
+            if not os.path.isfile(backup_filename):
+                self.save(backup_filename)
+
         except IOError:
+            # There is no savefile, so start one
             self.ds = DataStore._empty_store
             self._set_info()
 
@@ -201,7 +219,7 @@ class DataStore:
         :returns: a list of person_idx that match
         """
         person_idxs = []
-        for person_idx, d in self.ds[self._PEOPLE].iteritems():
+        for person_idx, d in self.ds[self._PEOPLE].items():
             if self._is_match(d[self._META][field], value):
                 person_idxs.append(person_idx)
         if person_idxs:
@@ -218,7 +236,7 @@ class DataStore:
         """
         # TODO(mrda): validate meeting_date
         self.ds[self._PEOPLE][person][self._MEETINGS].append(meeting_date)
-        self.save()
+        self.save(self.filename)
         return True
 
     # nottested
@@ -237,9 +255,9 @@ class DataStore:
             return False
         cleaned = [x for x in all_meeting_dates if x != meeting_date]
         self.ds[self._PEOPLE][person][self._MEETINGS] = cleaned
-        self.save()
+        self.save(self.filename)
         return True
 
     def dump(self):
         print("Dumping data")
-        print self.ds
+        print(self.ds)

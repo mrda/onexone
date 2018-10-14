@@ -4,11 +4,21 @@ A simple command-line tool to help people managers herd the cats.
 
 ## Quick Start
 
-    make venv
+To build a start environment, just do the following:
+
+    make
+    
+And then you'll be asked to choose between using python2 or python 3.  If you haven't already, it will prompt you to start the virtusl environment thast was created for you.  You can do this as follows:
+
     . ./venv/bin/activate
-    make develop
-    make check
-    make tests
+
+Once you've started the virtual environment, just start over:
+
+    make py2
+
+or
+
+    make py3
 
 ## CLI Usage
 
