@@ -10,27 +10,38 @@ all:
 
 py2: build-env check-env check develop tests
 
-py3: build-env3 check-env check develop tests
+py3: build-env3 check-env3 check develop tests
+
+python:
+	@echo "You're using: "
+	@python --version
 
 build-env: | $(VENV)
 	@echo "Found $(VENV)"
-	. venv/bin/activate; pip install -Ur requirements.txt
+	. $(VENV)/bin/activate; pip install -Ur requirements.txt
 
 build-env3: | $(VENV3)
 	@echo "Found $(VENV3)"
-	. venv/bin/activate; pip install -Ur requirements.txt
+	. $(VENV3)/bin/activate; pip install -Ur requirements.txt
 
 $(VENV):
 	@echo "*** $(VENV) doesn't exist"
-	virtualenv venv	
+	virtualenv $(VENV)
 
 $(VENV3):
 	@echo "*** $(VENV3) doesn't exist"
-	python3 -m venv venv
+	python3 -m venv $(VENV3)
 
 check-env:
 	@if [ "z$(VIRTUAL_ENV)" = "z" ]; then \
-            printf "\nPlease start your virtualenv,\nlike this '. ./venv/bin/activate'\n"; \
+            printf "\nPlease start your virtualenv,\nlike this '. $(VENV)/bin/activate'\n"; \
+            printf "Then enter your 'make' command again\n\n"; \
+            exit 1; \
+        else true; fi
+
+check-env3:
+	@if [ "z$(VIRTUAL_ENV)" = "z" ]; then \
+            printf "\nPlease start your virtualenv,\nlike this '. $(VENV3)/bin/activate'\n"; \
             printf "Then enter your 'make' command again\n\n"; \
             exit 1; \
         else true; fi
@@ -45,7 +56,7 @@ tests: check-env
 	${NOSE} -s
 
 clean:
-	rm -rf venv
+	rm -rf $(VENV) $(VENV3)
 	find . -iname "*.pyc" -o -iname "*.pyo" -o -iname "*.so" -o -iname "#*#" -delete
 
 
