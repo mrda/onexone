@@ -10,17 +10,15 @@ To build a start environment, just do the following:
 
     make
     
-And then you'll be asked to choose between using python2 or python 3.  If you haven't already, it will prompt you to start the virtusl environment thast was created for you.  You can do this as follows:
+If this is the first time you've run this in this terminal, it will prompt you to start the virtual environment that was created for you.  You can do this as follows:
 
-    . ./venv/bin/activate
+    . ./ven*/bin/activate
 
 Once you've started the virtual environment, just start over:
 
-    make py2
-
-or
-
-    make py3
+    make 
+    
+The build system will automatically determine if python3 is available, and if so, it will set things up for you to use that - but if it isn't, it will fall back and use python2 instead.
 
 ## CLI Usage
 
