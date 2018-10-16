@@ -162,11 +162,32 @@ class TestDataStore(unittest.TestCase):
                               'JohnCitizen'],
                              self.ds.get_all_fullnames())
 
-    # TODO(mrda): Tests for new_entry
+    # TODO(mrda): Tests for new_person
 
-    # TODO(mrda): Tests for remove_entry
+    # TODO(mrda): Tests for delete_person
 
-    # TODO(mrda): Tests for save
+    @mock.patch('json.dump', create=True)
+    def test_save(self, mock_json_dump):
+
+        # Get a appropriate "builtin" module name for py 2/3
+        if sys.version_info.major == 3:
+            builtin_module_name = 'builtins'
+        else:
+            builtin_module_name = '__builtin__'
+
+        mock_data = '{"info": {"version": "1.6.0"}}'
+        test_filename = 'rabbit'
+
+        self.ds.ds = mock_data
+
+        mock_open = mock.mock_open()
+        with mock.patch('{}.open'.format(builtin_module_name),
+                        mock_open,
+                        create=False):
+            self.ds.save(test_filename)
+
+        mock_open.assert_called_once_with(test_filename, 'w')
+        mock_json_dump.assert_called_once_with(mock_data, mock.ANY)
 
     @mock.patch('onexone.datastore.DataStore.build_savefile', create=True)
     @mock.patch('onexone.datastore.DataStore.save', create=True)
