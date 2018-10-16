@@ -20,6 +20,7 @@
 # 02111-1307, USA.
 #
 import appdirs
+import errno
 import os
 import pathlib
 import sys
@@ -52,7 +53,7 @@ def configure_datastore():
     except OSError as e:
         # Allow directory already exists to be squashed.
         # Otherwise allow it to bubble up
-        if e.errorcode != os.errno.EEXIST:
+        if e.errno != errno.EEXIST:
             raise
     ds = datastore.choose_location(DATA_FILENAME)
 

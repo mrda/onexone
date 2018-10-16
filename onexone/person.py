@@ -173,36 +173,6 @@ class Person:
             print("  {}".format(meeting))
 
     @debugging.trace
-    def _build_fullname(self, args):
-        """Build a fullname from the supplied (first, last) list.
-
-        :param args: a list of (first, last)
-        """
-        fullname = None if args[0] is None else args[0]
-        if len(args) > 1:
-            fullname += args[1]
-        return fullname
-
-    @debugging.trace
-    def _new_person(self, first=None, last=None, enabled=True):
-        """Build up the data representation of a person.
-
-        :param first: the person's first name
-        :param last: the person's last name
-        :param enabled: whether the individual is enabled
-
-        :returns: the dict representing a person
-        """
-        p = {}
-        p['meta'] = {}
-        p['meta']['enabled'] = enabled
-        p['meta']['first_name'] = first
-        p['meta']['last_name'] = last
-        p['meetings'] = ()
-
-        return p
-
-    @debugging.trace
     def add(self, args):
         """Top level function for adding a person.
 
@@ -220,9 +190,7 @@ class Person:
             first, last, enabled = args
 
         ds = datastore.get_datastore()
-        ds.new_entry(self._build_fullname(args),
-                     self._new_person(first, last, enabled))
-        ds.save()
+        ds.new_person(first, last, enabled)
 
     @debugging.trace
     def delete(self, args):

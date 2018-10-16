@@ -80,8 +80,37 @@ class DataStore:
         self.load(self.filename)
 
     # notested
-    def new_entry(self, key, value=None):
-        self.ds[self._PEOPLE][key] = value
+    @debugging.trace
+    def build_fullname(self, first, last):
+        """Build a fullname from the supplied first and last name.
+
+        :param first: the person's first name
+        :param last: the person's last name
+        :returns: the combined fullname
+        """
+        fullname = None if first is None else first
+        if last is not None:
+            fullname += last
+        return fullname
+
+    # notested
+    def new_person(self, first, last, enabled):
+        """Add a new person.
+
+        :param first: the person's first name
+        :param last: the person's last name
+        :param enabled: whether the individual is enabled
+        """
+        person = {}
+        person[self._META] = {}
+        person[self._META][self._ENABLED] = enabled
+        person[self._META][self._FIRST] = first
+        person[self._META][self._LAST] = last
+        person[self._MEETINGS] = ()
+
+        fullname = self.build_fullname(first, last)
+        self.ds[self._PEOPLE][fullname] = person
+        self.save(self.filename)
 
     # notested
     def remove_entry(self, key):
@@ -150,18 +179,15 @@ class DataStore:
     def get_meetings(self, key):
         return self.ds[key][self._MEETINGS]
 
-    # notested
     def save(self, filename):
         with open(filename, "w") as f:
             json.dump(self.ds, f)
 
-    # notested
     def build_savefile(self, filename):
         fmt = '%Y%m%d'
         today = datetime.date.today()
         return "{}-{}".format(filename, today.strftime(fmt))
 
-    # notested
     def load(self, filename):
         try:
             with open(filename, "r") as f:
