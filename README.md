@@ -12,7 +12,7 @@ To build a start environment, just do the following:
     
 If this is the first time you've run this in this terminal, it will prompt you to start the virtual environment that was created for you.  You can do this as follows:
 
-    . ./ven*/bin/activate
+    . ./venv/bin/activate
 
 Once you've started the virtual environment, just start over:
 

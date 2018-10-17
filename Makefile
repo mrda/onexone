@@ -21,66 +21,48 @@
 
 NOSE=nosetests
 VENV = ./venv
-VENV3 = ./venv3
 GUESS_PY=$(shell ./scripts/guess-python.sh)
 
-.PHONY: all build-env build-env3 check-env check-env3 check develop tests \
-       	clean python
+.PHONY: all build-env check-env check develop tests clean python
 
-# Autodetect which version of python we have available, and use that
-# with a preference of python3
-all:
+all: build-env check-env check develop tests
+
+# Building the environment is dependent upon which verson of python
+# we'll use.  We prefer python3 if it is available
+$(VENV):
 
 ifeq ($(GUESS_PY),python3)
-all: py3
+$(VENV):
+	@echo "You are using python3"
+	@echo "*** $(VENV) doesn't exist"
+	python3 -m venv $(VENV)
 endif
 
 ifeq ($(GUESS_PY),python2)
+$(VENV):
+	@echo "You are using python2"
+	@echo "*** $(VENV) doesn't exist"
+	virtualenv $(VENV)
 all: py2
 endif
 
 ifeq ($(GUESS_PY),none)
-all:
+$(VENV):
 	@printf "*** No python found. Exiting...\n"; \
 	exit 1;
 endif
-
-py2: build-env check-env check develop tests
-
-py3: build-env3 check-env3 check develop tests
 
 python:
 	@echo "You're using: "
 	@python --version
 
 build-env: | $(VENV)
-	@echo "You are using python2"
 	. $(VENV)/bin/activate; pip install -Ur requirements.txt
-
-build-env3: | $(VENV3)
-	@echo "You are using python3"
-	. $(VENV3)/bin/activate; pip install -Ur requirements.txt
-
-$(VENV):
-	@echo "*** $(VENV) doesn't exist"
-	virtualenv $(VENV)
-
-$(VENV3):
-	@echo "*** $(VENV3) doesn't exist"
-	python3 -m venv $(VENV3)
 
 check-env:
 	@if [ "z$(VIRTUAL_ENV)" = "z" ]; then \
             printf "\nPlease start your virtualenv,\nlike this "; \
             printf "'. $(VENV)/bin/activate'\n"; \
-            printf "Then enter your 'make' command again\n\n"; \
-            exit 1; \
-        else true; fi
-
-check-env3:
-	@if [ "z$(VIRTUAL_ENV)" = "z" ]; then \
-            printf "\nPlease start your virtualenv,\nlike this "; \
-            printf "'. $(VENV3)/bin/activate'\n"; \
             printf "Then enter your 'make' command again\n\n"; \
             exit 1; \
         else true; fi
@@ -96,6 +78,6 @@ tests: check-env
 	${NOSE} -s
 
 clean:
-	rm -rf $(VENV) $(VENV3)
+	rm -rf $(VENV)
 	find . -iname "*.pyc" -o -iname "*.pyo" -o -iname "*.so" \
 	       	-o -iname "#*#" -delete
