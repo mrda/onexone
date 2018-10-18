@@ -118,18 +118,15 @@ class Meeting:
         # Get the latest meeting slot for each person who is enabled
         ds = datastore.get_datastore()
         last_meeting = {}
-        for nick in ds.ds.keys():
-            if not ds.is_enabled(nick):
-                continue
-            mtg = self.get_latest_meeting(nick)
+        for fullname in ds.list_fullnames():
+            mtg = self.get_latest_meeting(fullname)
             if not mtg:
-                mtg = 0
+                mtg = '0'
 
-            last_meeting[nick] = mtg
+            last_meeting[fullname] = mtg
 
-        # Sort list in reverse chronological order
-        people_meetings = sorted(last_meeting.iteritems(),
-                                 key=lambda k, v: (v, k))
+        # Sort dictionary by value
+        people_meetings = sorted(last_meeting.items(), key=lambda kv: kv[1])
 
         # Display
         format_str = "{:>{}}  {:>8}"
