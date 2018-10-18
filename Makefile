@@ -43,7 +43,6 @@ $(VENV):
 	@echo "You are using python2"
 	@echo "*** $(VENV) doesn't exist"
 	virtualenv $(VENV)
-all: py2
 endif
 
 ifeq ($(GUESS_PY),none)
