@@ -33,7 +33,7 @@ class Person:
     def __init__(self):
         self.c = command.CommandOptions('person')
         self.c.add_command('list', self.list, "[all]")
-        self.c.add_command('add', self.add, "<first> <last> [enabled]")
+        self.c.add_command('add', self.add, "<first> <last> [role] [enabled]")
         self.c.add_command('enable', self.enable, "<searchstr> <enabled>")
         self.c.add_command('delete', self.delete, "(<first> <last> | <nick>)")
         self.c.add_command('find', self.find, "<search-string>")
@@ -167,6 +167,7 @@ class Person:
         print("")
         print("First name: {}".format(ds.get_first_name(fullname)))
         print("Last name: {}".format(ds.get_last_name(fullname)))
+        print("Role: {}".format(ds.get_role(fullname)))
         print("Enabled?: {}".format(ds.is_enabled(fullname)))
         print("One-on-One Meetings:")
         for meeting in sorted(ds.get_meetings(fullname)):
@@ -179,18 +180,23 @@ class Person:
         :param args: list of arguments to use in building a person
         """
         len_args = len(args)
-        if len_args < 2 or len_args > 3:
+        if len_args < 2 or len_args > 4:
             self.c.display_usage('add')
             return
+
+        role = ""
 
         if len_args == 2:
             first, last = args
             enabled = True
+        elif len_args == 3:
+            first, last, role = args
+            enabled = True
         else:
-            first, last, enabled = args
+            first, last, role, enabled = args
 
         ds = datastore.get_datastore()
-        ds.new_person(first, last, enabled)
+        ds.new_person(first, last, role, enabled)
 
     @debugging.trace
     def delete(self, args):

@@ -51,6 +51,7 @@ class DataStore:
     _INFO = 'info'
     _FIRST = 'first_name'
     _LAST = 'last_name'
+    _ROLE = 'role'
     _MEETINGS = 'meetings'
     _ENABLED = 'enabled'
     _FILENAME = 'filename'
@@ -94,11 +95,12 @@ class DataStore:
         return fullname
 
     # notested
-    def new_person(self, first, last, enabled):
+    def new_person(self, first, last, role, enabled):
         """Add a new person.
 
         :param first: the person's first name
         :param last: the person's last name
+        :param role: the person's role
         :param enabled: whether the individual is enabled
         """
         person = {}
@@ -106,6 +108,7 @@ class DataStore:
         person[self._META][self._ENABLED] = enabled
         person[self._META][self._FIRST] = first
         person[self._META][self._LAST] = last
+        person[self._META][self._ROLE] = role
         person[self._MEETINGS] = ()
 
         fullname = self.build_fullname(first, last)
@@ -247,6 +250,14 @@ class DataStore:
     def get_last_name(self, fullname):
         try:
             return self.ds[self._PEOPLE][fullname][self._META][self._LAST]
+        except KeyError:
+            return None
+
+    # nottested
+    @debugging.trace
+    def get_role(self, fullname):
+        try:
+            return self.ds[self._PEOPLE][fullname][self._META][self._ROLE]
         except KeyError:
             return None
 
