@@ -64,7 +64,6 @@ class Meeting:
 
         ds = datastore.get_datastore()
         ds.add_meeting(person, meeting)
-        ds.save()
 
     @debugging.trace
     def delete(self, args):
