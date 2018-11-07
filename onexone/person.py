@@ -228,7 +228,6 @@ class Person:
 
         ds = datastore.get_datastore()
         ds.remove_entry(fullname)
-        ds.save()
 
     @debugging.trace
     def list(self, args):

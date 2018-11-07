@@ -116,6 +116,7 @@ class DataStore:
     def remove_entry(self, key):
         # Note(mrda): No error if key isn't in dict
         self.ds[self._PEOPLE].pop(key, None)
+        self.save(self.filename)
 
     def _make_version(self):
         return "{}.{}.{}".format(DataStore._ds_version['major'],

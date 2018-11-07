@@ -280,3 +280,5 @@ class TestDataStore(unittest.TestCase):
     # TODO(mrda): Tests for add_meeting
 
     # TODO(mrda): Tests for delete_meeting
+
+    # TODO(mrda): Tests for remove_entry
