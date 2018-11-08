@@ -75,7 +75,7 @@ develop: check-env
 	python setup.py develop
 
 tests: check-env
-	${NOSE} -s
+	${NOSE} -s --with-coverage --cover-branches --cover-erase --cover-html --cover-package=onexone
 
 clean:
 	rm -rf $(VENV)
