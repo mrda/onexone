@@ -7,5 +7,5 @@ install:
   - pip install -r requirements.txt
 # command to run tests
 script:
-  - nosetests
-
+  - pycodestyle --show-source onexone tests
+  - nosetests -s --with-coverage --cover-branches --cover-erase --cover-html --cover-package=onexone

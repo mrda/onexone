@@ -1,4 +1,5 @@
 appdirs
+coverage
 mock
 nose
 pathlib
