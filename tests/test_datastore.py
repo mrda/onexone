@@ -189,9 +189,10 @@ class TestDataStore(unittest.TestCase):
         mock_open.assert_called_once_with(test_filename, 'w')
         mock_json_dump.assert_called_once_with(mock_data, mock.ANY)
 
+    @mock.patch('onexone.datastore.DataStore.ensure_fields', create=True)
     @mock.patch('onexone.datastore.DataStore.build_savefile', create=True)
     @mock.patch('onexone.datastore.DataStore.save', create=True)
-    def test_load_with_backup(self, mock_save, mock_build_savefile):
+    def test_load_with_backup(self, mock_save, mock_build_savefile, mock_ensure_fields):
 
         # Thanks https://gist.github.com/ViktorovEugene/27d76ad2d94c88170d7b
 
@@ -223,11 +224,12 @@ class TestDataStore(unittest.TestCase):
         mock_save.assert_called_once_with(dated_test_filename)
         mock_open.assert_called_once_with(test_filename, 'r')
 
+    @mock.patch('onexone.datastore.DataStore.ensure_fields', create=True)
     @mock.patch('os.path.isfile', create=True)
     @mock.patch('onexone.datastore.DataStore.build_savefile', create=True)
     @mock.patch('onexone.datastore.DataStore.save', create=True)
     def test_load_with_no_backup(self, mock_save, mock_build_savefile,
-                                 mock_is_file):
+                                 mock_is_file, mock_ensure_fields):
         test_filename = "qwertyuiop"
         mock_is_file.return_value = True
 

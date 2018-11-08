@@ -54,8 +54,24 @@ class DataStore:
     _ROLE = 'role'
     _MEETINGS = 'meetings'
     _ENABLED = 'enabled'
+    _START_DATE = 'start_date'
+    _END_DATE = 'end_date'
     _FILENAME = 'filename'
     _VERSION = 'version'
+
+    required_fields = (
+        _META,
+        _MEETINGS,
+    )
+
+    required_meta_fields = (
+        _ENABLED,
+        _FIRST,
+        _LAST,
+        _ROLE,
+        _START_DATE,
+        _END_DATE,
+    )
 
     # Note(mrda): Need to force booleans to be displayed as strings, so that
     # 'True' is printed instead of '1'.
@@ -71,7 +87,7 @@ class DataStore:
 
     _ds_version = {
         'major': 1,
-        'minor': 0,
+        'minor': 1,
         'patch': 0,
     }
 
@@ -95,12 +111,14 @@ class DataStore:
         return fullname
 
     # notested
-    def new_person(self, first, last, role, enabled):
+    def new_person(self, first, last, role, enabled, start_date, end_date):
         """Add a new person.
 
         :param first: the person's first name
         :param last: the person's last name
         :param role: the person's role
+        :param start_date: the person's start_date
+        :param end_date: the person's end_date
         :param enabled: whether the individual is enabled
         """
         person = {}
@@ -109,6 +127,10 @@ class DataStore:
         person[self._META][self._FIRST] = first
         person[self._META][self._LAST] = last
         person[self._META][self._ROLE] = role
+        person[self._META][self._START_DATE] = start_date
+        # Clearly adding a person won't have an end date, but we want
+        # to make sure this field is created
+        person[self._META][self._END_DATE] = end_date
         person[self._MEETINGS] = ()
 
         fullname = self.build_fullname(first, last)
@@ -120,6 +142,24 @@ class DataStore:
         # Note(mrda): No error if key isn't in dict
         self.ds[self._PEOPLE].pop(key, None)
         self.save(self.filename)
+
+    # notested
+    def ensure_fields(self):
+        # Iterate over all data, ensuring all fields are present
+        for key in sorted(self.ds[self._PEOPLE].keys()):
+            for req_field in self.required_fields:
+                try:
+                    a = self.ds[self._PEOPLE][key][req_field]
+                except KeyError:
+                    self.ds[self._PEOPLE][key][req_field] = None
+            for req_meta_field in self.required_meta_fields:
+                try:
+                    a = self.ds[self._PEOPLE][key][self._META][req_meta_field]
+                except KeyError:
+                    self.ds[self._PEOPLE][key][self._META][req_meta_field] \
+                        = None
+        # Update the version string
+        self.ds[self._INFO][self._VERSION] = self._make_version()
 
     def _make_version(self):
         return "{}.{}.{}".format(DataStore._ds_version['major'],
@@ -197,6 +237,11 @@ class DataStore:
             with open(filename, "r") as f:
                 self.ds = json.load(f)
 
+            # We need to cater for changing schema definitions.  The easiest
+            # and most backwards-compatible way is to ensure we have all the
+            # required fields available for each record.
+            self.ensure_fields()
+
             # Now that the file successfully opened, let's save a copy before
             # we do anything as a backup if we don't have one for today already
             backup_filename = self.build_savefile(filename)
@@ -258,6 +303,16 @@ class DataStore:
     def get_role(self, fullname):
         try:
             return self.ds[self._PEOPLE][fullname][self._META][self._ROLE]
+        except KeyError:
+            return None
+
+    # nottested
+    @debugging.trace
+    def get_dates(self, fullname):
+        try:
+            return (
+                self.ds[self._PEOPLE][fullname][self._META][self._START_DATE],
+                self.ds[self._PEOPLE][fullname][self._META][self._END_DATE])
         except KeyError:
             return None
 

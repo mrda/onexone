@@ -19,6 +19,9 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 # 02111-1307, USA.
 #
+
+from six.moves import input
+
 from onexone import command
 from onexone import datastore
 from onexone import debugging
@@ -33,7 +36,8 @@ class Person:
     def __init__(self):
         self.c = command.CommandOptions('person')
         self.c.add_command('list', self.list, "[all]")
-        self.c.add_command('add', self.add, "<first> <last> [role] [enabled]")
+        self.c.add_command('add', self.add, """<first> <last> [role] [enabled]
+ [start-date] [end-date]""")
         self.c.add_command('enable', self.enable, "<searchstr> <enabled>")
         self.c.add_command('delete', self.delete, "(<first> <last> | <nick>)")
         self.c.add_command('find', self.find, "<search-string>")
@@ -164,10 +168,13 @@ class Person:
         :param fullname: The person to print info about
         """
         ds = datastore.get_datastore()
+        start_date, end_date = ds.get_dates(fullname)
         print("")
         print("First name: {}".format(ds.get_first_name(fullname)))
         print("Last name: {}".format(ds.get_last_name(fullname)))
         print("Role: {}".format(ds.get_role(fullname)))
+        print("Start Date: {}".format(start_date))
+        print("End Date: {}".format(end_date))
         print("Enabled?: {}".format(ds.is_enabled(fullname)))
         print("One-on-One Meetings:")
         for meeting in sorted(ds.get_meetings(fullname)):
@@ -180,11 +187,13 @@ class Person:
         :param args: list of arguments to use in building a person
         """
         len_args = len(args)
-        if len_args < 2 or len_args > 4:
+        if len_args < 2 or len_args > 6:
             self.c.display_usage('add')
             return
 
         role = ""
+        start_date = ""
+        end_date = ""
 
         if len_args == 2:
             first, last = args
@@ -192,11 +201,15 @@ class Person:
         elif len_args == 3:
             first, last, role = args
             enabled = True
-        else:
+        elif len_args == 4:
             first, last, role, enabled = args
+        elif len_args == 5:
+            first, last, role, enabled, start_date = args
+        elif len_args == 6:
+            first, last, role, enabled, start_date, end_date = args
 
         ds = datastore.get_datastore()
-        ds.new_person(first, last, role, enabled)
+        ds.new_person(first, last, role, enabled, start_date, end_date)
 
     @debugging.trace
     def delete(self, args):
@@ -227,8 +240,8 @@ class Person:
             if self._exact_match(first, last):
                 fullname = self._build_fullname((first, last))
 
-        if raw_input("Are you sure you want to delete '{}'? ".
-           format(fullname)) not in ['Y', 'y']:
+        if input("Are you sure you want to delete '{}'? ".
+                 format(fullname)) not in ['Y', 'y']:
             print("Not deleting user")
             return
 
