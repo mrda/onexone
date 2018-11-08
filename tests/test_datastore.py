@@ -192,7 +192,8 @@ class TestDataStore(unittest.TestCase):
     @mock.patch('onexone.datastore.DataStore.ensure_fields', create=True)
     @mock.patch('onexone.datastore.DataStore.build_savefile', create=True)
     @mock.patch('onexone.datastore.DataStore.save', create=True)
-    def test_load_with_backup(self, mock_save, mock_build_savefile, mock_ensure_fields):
+    def test_load_with_backup(self, mock_save, mock_build_savefile,
+                              mock_ensure_fields):
 
         # Thanks https://gist.github.com/ViktorovEugene/27d76ad2d94c88170d7b
 
