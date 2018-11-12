@@ -25,16 +25,12 @@ import os
 import pathlib
 import sys
 
-from onexone import debugging
-for arg in sys.argv:
-    if arg == "--debug":
-        debugging._debug = True
-
-from onexone import command    # noqa
-from onexone import datastore  # noqa
-from onexone import meeting    # noqa
-from onexone import person     # noqa
-from onexone import utils      # noqa
+from onexone import debugging  # Must be first
+from onexone import command
+from onexone import datastore
+from onexone import meeting
+from onexone import person
+from onexone import utils
 
 
 debug = False
