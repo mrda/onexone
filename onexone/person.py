@@ -20,7 +20,7 @@
 # 02111-1307, USA.
 #
 
-from six.moves import input
+import six.moves as sm
 
 from onexone import command
 from onexone import datastore
@@ -138,7 +138,7 @@ class Person:
             print("No match found")
 
     @debugging.trace
-    def info(self, args):
+    def info(self, args, interactive=True):
         """Top level info command.  Find a person based up on the supplied
         criteria, and print all relevant information.
 
@@ -149,10 +149,12 @@ class Person:
             return
 
         searchstr = args[0]
-        print("Searching for {}".format(searchstr))
+        if interactive:
+            print("Searching for {}".format(searchstr))
         fullnames = self._find(searchstr, True)
         if not fullnames:
-            print("No record found")
+            if interactive:
+                print("No record found")
             return
         for f in fullnames:
             self._print_person(f)
@@ -219,6 +221,8 @@ class Person:
             self.c.display_usage('delete')
             return
 
+        ds = datastore.get_datastore()
+
         fullname = None
         if len_args == 1:
             # Partial user supplied, go find a match
@@ -235,14 +239,13 @@ class Person:
             # Provided a first and last name, looking for an exact match
             first, last = args
             if self._exact_match(first, last):
-                fullname = self._build_fullname((first, last))
+                fullname = ds.build_fullname(first, last)
 
-        if input("Are you sure you want to delete '{}'? ".
-                 format(fullname)) not in ['Y', 'y']:
+        if sm.input("Are you sure you want to delete '{}'? ".
+                    format(fullname)) not in ['Y', 'y']:
             print("Not deleting user")
             return
 
-        ds = datastore.get_datastore()
         ds.remove_entry(fullname)
 
     @debugging.trace

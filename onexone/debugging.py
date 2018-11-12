@@ -20,8 +20,14 @@
 # 02111-1307, USA.
 #
 import functools
+import sys
 
 _debug = False
+
+
+for arg in sys.argv:
+    if arg == "--debug":
+        _debug = True
 
 
 def trace(func):
