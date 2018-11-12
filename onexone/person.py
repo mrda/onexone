@@ -26,9 +26,6 @@ from onexone import command
 from onexone import datastore
 from onexone import debugging
 
-debug = False
-debugging._debug = debug
-
 
 class Person:
     """Representation of a person."""
