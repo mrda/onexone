@@ -28,10 +28,6 @@ from onexone import debugging
 _ds = None
 
 
-debug = False
-debugging._debug = debug
-
-
 @debugging.trace
 def get_datastore(filename="onexone-data"):
     global _ds

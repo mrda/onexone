@@ -25,9 +25,6 @@ from onexone import datastore
 from onexone import debugging
 from onexone import person
 
-debug = False
-debugging._debug = debug
-
 
 class Meeting:
     """Representation of a meeting."""
