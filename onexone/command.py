@@ -23,6 +23,7 @@ from onexone import debugging
 from onexone import utils
 
 from codecs import encode as z
+from builtins import chr
 
 
 class CommandOptions:
