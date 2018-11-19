@@ -23,9 +23,9 @@ NOSE=nosetests
 VENV = ./venv
 GUESS_PY=$(shell ./scripts/guess-python.sh)
 
-.PHONY: all build-env check-env check develop tests clean python
+.PHONY: all check-env check develop tests clean python
 
-all: build-env check-env check develop tests
+all: check-env check develop tests
 
 # Building the environment is dependent upon which verson of python
 # we'll use.  We prefer python3 if it is available
@@ -55,16 +55,14 @@ python:
 	@echo "You're using: "
 	@python --version
 
-build-env: | $(VENV)
-	. $(VENV)/bin/activate; pip install -Ur requirements.txt
-
-check-env:
+check-env: $(VENV)
 	@if [ "z$(VIRTUAL_ENV)" = "z" ]; then \
-            printf "\nPlease start your virtualenv,\nlike this "; \
+            printf "\nPlease start your virtualenv first,\nlike this "; \
             printf "'. $(VENV)/bin/activate'\n"; \
             printf "Then enter your 'make' command again\n\n"; \
             exit 1; \
         else true; fi
+	pip install -Ur requirements.txt
 
 check: check-env
 	-pycodestyle --show-source onexone tests
