@@ -19,6 +19,7 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 # 02111-1307, USA.
 #
+import datetime
 import pkg_resources
 
 _name = "undefined"
@@ -44,3 +45,11 @@ def display_program_header(args=None):
                                      pkg_resources.require("onexone")[0]
                                      .version,
                                      c))
+
+
+def validate_date(datestr, expected="%Y%m%d"):
+    try:
+        dateobj = datetime.datetime.strptime(datestr, expected)
+        return True
+    except ValueError:
+        return False
