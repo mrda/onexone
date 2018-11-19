@@ -24,6 +24,7 @@ from onexone import command
 from onexone import datastore
 from onexone import debugging
 from onexone import person
+from onexone import utils
 
 
 class Meeting:
@@ -49,7 +50,6 @@ class Meeting:
             return
 
         name = args[0]
-        meeting = args[1]
         matches = self.p._find(name, False)
         if not matches:
             print("Can't find '{}'".format(name))
@@ -58,6 +58,11 @@ class Meeting:
             print("Multiple persons found: {}".format(matches))
             return
         person = matches[0]
+
+        meeting = args[1]
+        if not utils.validate_date(meeting):
+            print("Invalid date '{}'".format(meeting))
+            return
 
         ds = datastore.get_datastore()
         ds.add_meeting(person, meeting)
@@ -75,7 +80,6 @@ class Meeting:
             return
 
         name = args[0]
-        meeting = args[1]
         matches = self.p._find(name, False)
         if not matches:
             print("Can't find '{}'".format(name))
@@ -84,6 +88,11 @@ class Meeting:
             print("Multiple persons found: {}".format(matches))
             return
         person = matches[0]
+
+        meeting = args[1]
+        if not utils.validate_date(meeting):
+            print("Invalid date '{}'".format(meeting))
+            return
 
         ds = datastore.get_datastore()
         ds.delete_meeting(person, meeting)
