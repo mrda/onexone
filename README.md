@@ -6,7 +6,7 @@ A simple command-line tool to help people managers herd the cats.
 
 ## Quick Start
 
-To build a start environment, just do the following:
+To build a developer environment, just do the following:
 
     make
     
