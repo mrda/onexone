@@ -66,7 +66,7 @@ def main():
     p = person.Person()
     c.add_command('person', p.parse, "<subcommand>")
     e = eggs.Eggs(debug=debug)
-    c.add_command(e.eggs, e.egg_info, None)
+    c.add_command(e.eggs, e.egg_info, quiet=True)
     m = meeting.Meeting()
     c.add_command('meeting', m.parse, "<subcommand>")
 
