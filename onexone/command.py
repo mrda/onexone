@@ -29,11 +29,14 @@ class CommandOptions:
         self.commands = {}
         self.subcommand = subcommand
         self.debug = debug
+        self.quiet_commands = []
 
     @debugging.trace
-    def add_command(self, command, func, valid_args=None):
+    def add_command(self, command, func, valid_args=None, quiet=False):
         if self.debug:
             print("Registering '{}' to {}".format(command, func))
+        if quiet:
+            self.quiet_commands.append(command)
         self.commands[command] = (func, valid_args)
         if self.debug:
             self.show_jumptable()
@@ -82,4 +85,6 @@ class CommandOptions:
         else:
             print("Valid commands are:")
         for command in sorted(self.commands.keys()):
+            if command in self.quiet_commands:
+                continue
             print("  {} {}".format(command, self.commands[command][1]))
