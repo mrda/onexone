@@ -22,9 +22,6 @@
 from onexone import debugging
 from onexone import utils
 
-from codecs import encode as z
-from builtins import chr
-
 
 class CommandOptions:
 
@@ -32,11 +29,6 @@ class CommandOptions:
         self.commands = {}
         self.subcommand = subcommand
         self.debug = debug
-        self.y = chr(175) + chr(92) + chr(95) + chr(40) + chr(12484)
-        self.y += chr(41) + chr(95) + chr(47) + chr(175)
-        self.z = chr(114) + chr(111) + chr(116) + chr(95) + chr(49) + chr(51)
-        self.eggs = chr(104) + chr(111) + chr(119)
-        self.commands[self.eggs] = (self.egg_info, None)
 
     @debugging.trace
     def add_command(self, command, func, valid_args=None):
@@ -57,6 +49,12 @@ class CommandOptions:
         if self.debug:
             print("jump: About to invoke '{}' with args '{}'".
                   format(command, rest))
+
+        # Special casing for bash-completion
+        if command == '--list-opts':
+            print(' '.join(key for key in self.commands))
+            return
+
         try:
             func = self.commands[command][0]
             func(rest)
@@ -65,19 +63,6 @@ class CommandOptions:
             self.usage()
         except Exception as e:
             print("Problem invoking subcommand '{}' ({})".format(command, e))
-
-    @debugging.trace
-    def egg_info(self, args):
-        if (len(args) == 4 and
-           z(args[0], self.z) == 'qb' and
-           z(args[1], self.z) == 'V' and
-           z(args[2], self.z) == 'znantr' and
-           z(args[3], self.z) == 'crbcyr?'):
-            print(self.y)
-        else:
-            args.insert(0, self.eggs)
-            print("Unknown subcommand: {}".format(", ".join(args)))
-            self.usage()
 
     def show_jumptable(self):
         print("==== Jump table ====")
@@ -97,6 +82,4 @@ class CommandOptions:
         else:
             print("Valid commands are:")
         for command in sorted(self.commands.keys()):
-            if command == self.eggs:
-                continue
             print("  {} {}".format(command, self.commands[command][1]))
