@@ -23,7 +23,7 @@ NOSE=nosetests
 VENV = ./venv
 GUESS_PY=$(shell ./scripts/guess-python.sh)
 
-.PHONY: all check-env check develop tests clean python
+.PHONY: all check-env check develop tests clean python install uninstall cover
 
 all: check-env check develop tests
 
@@ -70,8 +70,17 @@ check: check-env
 develop: check-env
 	python setup.py develop
 
+install:
+	pip install -Ur requirements.txt .
+
+uninstall:
+	pip uninstall onexone
+
 tests: check-env
 	${NOSE} -s --with-coverage --cover-branches --cover-erase --cover-html --cover-package=onexone
+
+cover:
+	xdg-open cover/index.html
 
 clean:
 	rm -rf $(VENV)
