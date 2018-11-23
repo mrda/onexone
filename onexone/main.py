@@ -28,6 +28,7 @@ import sys
 from onexone import debugging  # Must be first
 from onexone import command
 from onexone import datastore
+from onexone import eggs
 from onexone import meeting
 from onexone import person
 from onexone import utils
@@ -64,6 +65,8 @@ def main():
     c.add_command('version', utils.display_program_header, "")
     p = person.Person()
     c.add_command('person', p.parse, "<subcommand>")
+    e = eggs.Eggs(debug=debug)
+    c.add_command(e.eggs, e.egg_info, None)
     m = meeting.Meeting()
     c.add_command('meeting', m.parse, "<subcommand>")
 
