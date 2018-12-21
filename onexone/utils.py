@@ -19,7 +19,9 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 # 02111-1307, USA.
 #
+import appdirs
 import datetime
+import os
 import pkg_resources
 
 _name = "undefined"
@@ -36,15 +38,39 @@ def register_years(years):
     _years = years
 
 
-def display_program_header(args=None):
-    # Note(mrda): Ignoring args
+def get_program_header():
     global _name, _years
     c = "Copyright (C) {} Michael Davies <michael-{}@the-davies.net>".format(
         _years, _name)
-    print("{} Version {}  {}".format(_name,
-                                     pkg_resources.require("onexone")[0]
-                                     .version,
-                                     c))
+    return "{} Version {}  {}".format(_name,
+                                      pkg_resources.require("onexone")[0]
+                                      .version,
+                                      c)
+
+
+def get_config_dir():
+    global _name
+    user = os.environ.get('USER')
+    config_dir = appdirs.user_config_dir(_name, user)
+    return config_dir
+
+
+def get_data_filename():
+    global _name
+    config_dir = get_config_dir()
+    save_file = "{}-data.json".format(_name)
+    data_filename = os.path.join(config_dir, save_file)
+    return data_filename
+
+
+def display_program_header(args=None):
+    # Note(mrda): Ignoring args
+    print(get_program_header())
+
+
+def display_program_info(args=None):
+    print(get_program_header())
+    print("Save file location: {}".format(get_data_filename()))
 
 
 def validate_date(datestr, expected="%Y%m%d"):

@@ -21,7 +21,6 @@
 #
 import appdirs
 import errno
-import os
 import pathlib
 import sys
 
@@ -34,39 +33,46 @@ from onexone import person
 from onexone import utils
 
 
-debug = False
-
-APP_NAME = 'onexone'
-SAVE_FILE = 'onexone-data.json'
-USER = os.environ.get('USER')
-CONFIG_DIR = appdirs.user_config_dir(APP_NAME, USER)
-DATA_FILENAME = os.path.join(CONFIG_DIR, SAVE_FILE)
-
-utils.register_name(APP_NAME)
-utils.register_years("2018")
+# APP_NAME = 'onexone'
+# utils.register_name(APP_NAME)
+# utils.register_years("2018")
 
 
 @debugging.trace
 def configure_datastore():
     # Initialise the location for stored data
     try:
-        pathlib.Path(CONFIG_DIR).mkdir(parents=True)
+        pathlib.Path(utils.get_config_dir()).mkdir(parents=True)
     except OSError as e:
         # Allow directory already exists to be squashed.
         # Otherwise allow it to bubble up
         if e.errno != errno.EEXIST:
             raise
-    ds = datastore.choose_location(DATA_FILENAME)
+    ds = datastore.choose_location(utils.get_data_filename())
 
 
 def main():
-    c = command.CommandOptions(debug=debug)
-    c.add_command('help', c.usage, "")
-    c.add_command('version', utils.display_program_header, "")
+
+    APP_NAME = 'onexone'
+    utils.register_name(APP_NAME)
+    utils.register_years("2018")
+
+    c = command.CommandOptions(debug=debugging._debug)
+
+    c.add_command('help', c.usage, "", alias=["--help"])
+
+    c.add_command('version', utils.display_program_header, "",
+                  alias=["--version"])
+
+    c.add_command('info', utils.display_program_info, "",
+                  alias=["--info"])
+
     p = person.Person()
     c.add_command('person', p.parse, "<subcommand>")
-    e = eggs.Eggs(debug=debug)
+
+    e = eggs.Eggs(debug=debugging._debug)
     c.add_command(e.eggs, e.egg_info, quiet=True)
+
     m = meeting.Meeting()
     c.add_command('meeting', m.parse, "<subcommand>")
 

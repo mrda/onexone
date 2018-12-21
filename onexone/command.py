@@ -32,12 +32,26 @@ class CommandOptions:
         self.quiet_commands = []
 
     @debugging.trace
-    def add_command(self, command, func, valid_args=None, quiet=False):
-        if self.debug:
-            print("Registering '{}' to {}".format(command, func))
+    def add_command(self, command, func, valid_args=None, quiet=False,
+                    alias=None):
+
+        # Allow for a command to be kept quiet
         if quiet:
             self.quiet_commands.append(command)
+
+        # Register the command
+        if self.debug:
+            print("Registering '{}' to {}".format(command, func))
         self.commands[command] = (func, valid_args)
+
+        # Allow command aliasing
+        if alias is not None:
+            for a in alias:
+                if self.debug:
+                    print("Aliased command '{}' to '{}'".format(a, command))
+                self.commands[a] = (func, valid_args)
+                self.quiet_commands.append(a)
+
         if self.debug:
             self.show_jumptable()
             print("\n")
@@ -67,19 +81,23 @@ class CommandOptions:
         except Exception as e:
             print("Problem invoking subcommand '{}' ({})".format(command, e))
 
+    @debugging.trace
     def show_jumptable(self):
         print("==== Jump table ====")
         print(self.commands)
 
+    @debugging.trace
     def display_usage(self, command):
         if command not in self.commands:
             print("*** No such subcommand defined")
             return
         print("Usage: {} {}".format(command, self.commands[command][1]))
 
+    @debugging.trace
     def usage(self, args=None):
         # Note(mrda): Deliberately ignoring args
         utils.display_program_header()
+
         if self.subcommand:
             print("Valid subcommands for '{}' are:".format(self.subcommand))
         else:
