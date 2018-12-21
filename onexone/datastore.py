@@ -182,19 +182,27 @@ class DataStore:
         return keys
 
     @debugging.trace
-    def iterate_over_persons(self, func, only_enabled=False):
+    def iterate_over_persons(self, func, enable_state):
         """Iterate over all persons, invoking func.
 
         :param func: The function to invoke, which takes a fullname as a param
-        :param only_enabled: whether to include only enabled persons
+        :param enable_state: one of None, 'enable', 'disable'
         """
         for fullname in sorted(self.ds[self._PEOPLE].keys()):
             # Iterate over all entries
-            if not only_enabled:
-                func(fullname)
-                continue
-            # Iterate over only enabled persons
-            if self.ds[self._PEOPLE][fullname][self._META][self._ENABLED]:
+            # if enable_state is None:
+            #     func(fullname)
+            #     continue
+            # Iterate over only enable or disable persons
+            if enable_state == 'enable':
+                enable = True
+            elif enable_state == 'disable':
+                enable = False
+            else:
+                enable = None
+            if (enable is None or
+                self.ds[self._PEOPLE][fullname][self._META]
+                    [self._ENABLED] is enable):
                 func(fullname)
 
     def is_enabled(self, fullname):

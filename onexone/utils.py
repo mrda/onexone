@@ -79,3 +79,10 @@ def validate_date(datestr, expected="%Y%m%d"):
         return True
     except ValueError:
         return False
+
+
+def format_string(yyyymmdd):
+    if yyyymmdd == "":
+        return ""
+    return "{:4s}-{:2s}-{:2s}".format(yyyymmdd[0:4], yyyymmdd[4:6],
+                                      yyyymmdd[6:8])
