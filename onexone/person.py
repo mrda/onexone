@@ -26,6 +26,7 @@ import prettytable
 from onexone import command
 from onexone import datastore
 from onexone import debugging
+from onexone import utils
 
 
 class Person:
@@ -33,7 +34,7 @@ class Person:
 
     def __init__(self):
         self.c = command.CommandOptions('person')
-        self.c.add_command('list', self.list, "[all]")
+        self.c.add_command('list', self.list, "[all | disabled | enabled]")
         self.c.add_command('add', self.add, """<first> <last> [role] [enabled]
  [start-date] [end-date]""")
         self.c.add_command('enable', self.enable, "<searchstr> <enabled>")
@@ -270,11 +271,15 @@ class Person:
                 print("\n".join(ds.list_fullnames()))
         elif len_args == 1 and args[0] == 'all':
             self.list_everything()
+        elif len_args == 1 and args[0] == 'enabled':
+            self.list_everything(enable_state='enable')
+        elif len_args == 1 and args[0] == 'disabled':
+            self.list_everything(enable_state='disable')
         else:
             self.c.display_usage('list')
 
     @debugging.trace
-    def list_everything(self):
+    def list_everything(self, enable_state=None):
         """List everything about all people."""
         ds = datastore.get_datastore()
         table = prettytable.PrettyTable()
@@ -283,7 +288,8 @@ class Person:
             a = []
             a.append("First Name")
             a.append("Last Name")
-            a.append("Enabled?")
+            if enable_state is None:
+                a.append("Enabled?")
             a.append("Role")
             a.append("Start Date")
             a.append("End Date")
@@ -301,23 +307,26 @@ class Person:
             a = []
             a.append(_sanitise(ds.get_first_name(fullname)))
             a.append(_sanitise(ds.get_last_name(fullname)))
-            a.append(_sanitise(ds.get_enabled(fullname)))
+            if enable_state is None:
+                a.append(_sanitise(ds.get_enabled(fullname)))
             a.append(_sanitise(ds.get_role(fullname)))
             dates = ds.get_dates(fullname)
-            a.append(_sanitise(dates[0]))
-            a.append(_sanitise(dates[1]))
+            a.append(utils.format_string(_sanitise(dates[0])))
+            a.append(utils.format_string(_sanitise(dates[1])))
             meetings = ds.get_meetings(fullname)
             if len(meetings) < 2:
-                a.append(", ".join(m for m in meetings))
+                a.append(", ".join(utils.format_string(m) for m in meetings))
             else:
-                a.append("{} ... {}".format(meetings[0], meetings[-1]))
+                a.append("{} ... {}".format(
+                    utils.format_string(meetings[0]),
+                    utils.format_string(meetings[-1])))
             table.add_row(a)
 
         headings = _get_headings()
         table.field_names = headings
         for h in headings:
             table.align[h] = 'l'  # left align
-        ds.iterate_over_persons(_print_person)
+        ds.iterate_over_persons(_print_person, enable_state)
         print(table)
 
     @debugging.trace
