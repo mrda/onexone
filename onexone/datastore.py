@@ -83,7 +83,7 @@ class DataStore:
 
     _ds_version = {
         'major': 1,
-        'minor': 1,
+        'minor': 2,
         'patch': 0,
     }
 
@@ -182,23 +182,20 @@ class DataStore:
         return keys
 
     @debugging.trace
-    def list_everything(self):
-        output = DataStore._all_format.format(
-              "First Name", "Last Name", "Enabled?", "Last OneOnOne")
-        output += "\n"
-        for key in sorted(self.ds[self._PEOPLE].keys()):
-            meetings = sorted(self.ds[self._PEOPLE][key][self._MEETINGS],
-                              reverse=True)
-            latest_meeting = ''
-            if meetings:
-                latest_meeting = meetings[0]
-            output += DataStore._all_format.format(
-                  self.ds[self._PEOPLE][key][self._META][self._FIRST],
-                  self.ds[self._PEOPLE][key][self._META][self._LAST],
-                  self.ds[self._PEOPLE][key][self._META][self._ENABLED],
-                  latest_meeting)
-            output += "\n"
-        return output
+    def iterate_over_persons(self, func, only_enabled=False):
+        """Iterate over all persons, invoking func.
+
+        :param func: The function to invoke, which takes a fullname as a param
+        :param only_enabled: whether to include only enabled persons
+        """
+        for fullname in sorted(self.ds[self._PEOPLE].keys()):
+            # Iterate over all entries
+            if not only_enabled:
+                func(fullname)
+                continue
+            # Iterate over only enabled persons
+            if self.ds[self._PEOPLE][fullname][self._META][self._ENABLED]:
+                func(fullname)
 
     def is_enabled(self, fullname):
         """Check to see if a person is enabled.
@@ -221,7 +218,7 @@ class DataStore:
 
     def save(self, filename):
         with open(filename, "w") as f:
-            json.dump(self.ds, f)
+            json.dump(self.ds, f, indent=4)
 
     def build_savefile(self, filename):
         fmt = '%Y%m%d'
@@ -299,6 +296,14 @@ class DataStore:
     def get_role(self, fullname):
         try:
             return self.ds[self._PEOPLE][fullname][self._META][self._ROLE]
+        except KeyError:
+            return None
+
+    # nottested
+    @debugging.trace
+    def get_enabled(self, fullname):
+        try:
+            return self.ds[self._PEOPLE][fullname][self._META][self._ENABLED]
         except KeyError:
             return None
 

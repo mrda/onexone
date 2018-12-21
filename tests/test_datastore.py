@@ -67,17 +67,6 @@ class TestDataStore(unittest.TestCase):
                              ['JaneSmith'],
                              self.ds.list_fullnames(False))
 
-    # Tests for list_everything
-    def test_list_everything(self):
-        fm = "{:>15} {:>15} {!s:>15} {:>15}"
-        expected = fm.format('First Name', 'Last Name', 'Enabled?',
-                             'Last OneOnOne') + '\n'
-        expected += fm.format('Carlos', 'Smith', True, '') + '\n'
-        expected += fm.format('Fred', 'Flintstone', True, '') + '\n'
-        expected += fm.format('Jane', 'Smith', False, '20181003') + '\n'
-        expected += fm.format('John', 'Citizen', True, '20181003') + '\n'
-        self.assertEqual(expected, self.ds.list_everything())
-
     # Tests for find and _is_match
     def test__is_match_matches(self):
         self.assertTrue(self.ds._is_match('banana', 'banana'))
@@ -187,7 +176,7 @@ class TestDataStore(unittest.TestCase):
             self.ds.save(test_filename)
 
         mock_open.assert_called_once_with(test_filename, 'w')
-        mock_json_dump.assert_called_once_with(mock_data, mock.ANY)
+        mock_json_dump.assert_called_once_with(mock_data, mock.ANY, indent=4)
 
     @mock.patch('onexone.datastore.DataStore.ensure_fields', create=True)
     @mock.patch('onexone.datastore.DataStore.build_savefile', create=True)

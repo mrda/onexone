@@ -21,6 +21,7 @@
 #
 
 import six.moves as sm
+import prettytable
 
 from onexone import command
 from onexone import datastore
@@ -207,8 +208,14 @@ class Person:
         elif len_args == 6:
             first, last, role, enabled, start_date, end_date = args
 
+        # Need to do some data validation/conversion
+        if enabled in ["true", "True"]:
+            enabled = True
+        elif enabled in ["false", "False"]:
+            enabled = False
+
         ds = datastore.get_datastore()
-        ds.new_person(first, last, role, enabled, start_date, end_date)
+        ds.new_person(first, last, role, bool(enabled), start_date, end_date)
 
     @debugging.trace
     def delete(self, args):
@@ -262,9 +269,56 @@ class Person:
             if fullnames is not None:
                 print("\n".join(ds.list_fullnames()))
         elif len_args == 1 and args[0] == 'all':
-            print(ds.list_everything())
+            self.list_everything()
         else:
             self.c.display_usage('list')
+
+    @debugging.trace
+    def list_everything(self):
+        """List everything about all people."""
+        ds = datastore.get_datastore()
+        table = prettytable.PrettyTable()
+
+        def _get_headings():
+            a = []
+            a.append("First Name")
+            a.append("Last Name")
+            a.append("Enabled?")
+            a.append("Role")
+            a.append("Start Date")
+            a.append("End Date")
+            a.append("Meetings")
+            return a
+
+        def _sanitise(a):
+            # Cleanup printing by not printing None or True
+            if a is None or a is True:
+                return ""
+            else:
+                return a
+
+        def _print_person(fullname):
+            a = []
+            a.append(_sanitise(ds.get_first_name(fullname)))
+            a.append(_sanitise(ds.get_last_name(fullname)))
+            a.append(_sanitise(ds.get_enabled(fullname)))
+            a.append(_sanitise(ds.get_role(fullname)))
+            dates = ds.get_dates(fullname)
+            a.append(_sanitise(dates[0]))
+            a.append(_sanitise(dates[1]))
+            meetings = ds.get_meetings(fullname)
+            if len(meetings) < 2:
+                a.append(", ".join(m for m in meetings))
+            else:
+                a.append("{} ... {}".format(meetings[0], meetings[-1]))
+            table.add_row(a)
+
+        headings = _get_headings()
+        table.field_names = headings
+        for h in headings:
+            table.align[h] = 'l'  # left align
+        ds.iterate_over_persons(_print_person)
+        print(table)
 
     @debugging.trace
     def enable(self, args):
