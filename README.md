@@ -26,6 +26,7 @@ The build system will automatically determine if python3 is available, and if so
 * `onexone version` - Displays the software version
 
 * `onexone person add <first> <last> [role] [enabled] [start-date] [end-date]` - Add a person to be managed, optionally specifying their role, whether they are enabled or disabled, and their start and end dates.  By default, new people added are enabled.
+* `onexone person edit <searchstr> <key> <value>` - Update field 'key' to 'value' for the unique person matched by 'searchstr'
 * `onexone person delete (<first> <last>|<nick>)` - Search and delete a person
 * `onexone person enable <searchstrst> <enabled>` - Enable or disable a person
 * `onexone person find <search-str>` - Search and find a person
