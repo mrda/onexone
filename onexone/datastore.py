@@ -24,6 +24,7 @@ import json
 import os
 
 from onexone import debugging
+from onexone import utils
 
 _ds = None
 
@@ -128,6 +129,24 @@ class DataStore:
     # notested
     def person_exists(self, fullname):
         return fullname in self.ds[self._PEOPLE]
+
+    # notested
+    def update_person(self, fullname, key, val):
+        if fullname not in self.ds[self._PEOPLE]:
+            print("*** Can't find '{}' to update".format(fullname))
+            return
+        if key not in self.ds[self._PEOPLE][fullname][self._META]:
+            print("*** Can't find '{}' in person '{}' to update".format
+                  (key, fullname))
+            return
+
+        # TODO: Validate 'val' for date type etc
+        bool_check = utils.sanitise_bool(val)
+        if bool_check is not None:
+            val = bool_check
+
+        self.ds[self._PEOPLE][fullname][self._META][key] = val
+        self.save(self.filename)
 
     # notested
     def new_person(self, first, last, role, enabled, start_date, end_date):

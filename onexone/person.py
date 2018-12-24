@@ -37,8 +37,9 @@ class Person:
         self.c.add_command('list', self.list, "[all | disabled | enabled]")
         self.c.add_command('add', self.add, "<first> <last> [role] [enabled]"
                            " [start-date] [end-date]")
+        self.c.add_command('edit', self.edit, "<searchstr> <key> <value>")
         self.c.add_command('enable', self.enable, "<searchstr> <enabled>")
-        self.c.add_command('delete', self.delete, "(<first> <last> | <nick>)")
+        self.c.add_command('delete', self.delete, "(<first> <last>|<nick>)")
         self.c.add_command('find', self.find, "<search-string>")
         self.c.add_command('info', self.info, "<search-string>")
 
@@ -87,11 +88,11 @@ class Person:
         """Search for a person based upon the supplied search string.
 
         :param person_str: the search criteria
-        :returns: Tuple (Bool, result set | reason
+        :returns: Tuple (Bool, result set | reason)
         """
 
         # Note(mrda): Method not yet used
-        possible_persons = self._find([person_str])
+        possible_persons = self._find(person_str)
         len_possible_persons = len(possible_persons)
         if len_possible_persons == 0:
             return (False, "No match found")
@@ -121,6 +122,31 @@ class Person:
         intersection = [v for v in first_result if v in last_result]
 
         return len(intersection) == 1
+
+    @debugging.trace
+    def edit(self, args):
+        """Top level person edit function.  Look for a person based upon the
+        provided search criteria, and allow fields to be updated.
+
+        :param args: The criteria to search against, and key/value updates.
+        """
+        if len(args) != 3:
+            self.c.display_usage('edit')
+            return
+
+        searchstr = args[0]
+        key = args[1]
+        val = args[2]
+
+        exact, fullname = self.find_person(searchstr)
+        if not exact:
+            print("*** '{}' does not exactly match a single person. "
+                  "Possibilities are:".format(searchstr))
+            self.find([searchstr])
+            return
+
+        ds = datastore.get_datastore()
+        ds.update_person(fullname, key, val)
 
     @debugging.trace
     def find(self, args):
