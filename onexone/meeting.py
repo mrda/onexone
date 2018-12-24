@@ -65,6 +65,10 @@ class Meeting:
             return
 
         ds = datastore.get_datastore()
+        if ds.meeting_exists(person, meeting):
+            print("*** Meeting '{}' already exists for '{}', no changes made".
+                  format(meeting, person))
+            return
         ds.add_meeting(person, meeting)
 
     @debugging.trace

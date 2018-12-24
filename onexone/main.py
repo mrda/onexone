@@ -29,13 +29,10 @@ from onexone import command
 from onexone import datastore
 from onexone import eggs
 from onexone import meeting
+from onexone import meta
 from onexone import person
+from onexone import replay
 from onexone import utils
-
-
-# APP_NAME = 'onexone'
-# utils.register_name(APP_NAME)
-# utils.register_years("2018")
 
 
 @debugging.trace
@@ -64,9 +61,6 @@ def main():
     c.add_command('version', utils.display_program_header, "",
                   alias=["--version"])
 
-    c.add_command('info', utils.display_program_info, "",
-                  alias=["--info"])
-
     p = person.Person()
     c.add_command('person', p.parse, "<subcommand>")
 
@@ -75,6 +69,14 @@ def main():
 
     m = meeting.Meeting()
     c.add_command('meeting', m.parse, "<subcommand>")
+
+    r = replay.Replay()
+    c.add_command('replay', r.parse, "<subcommand>")
+
+    me = meta.Meta()
+    c.add_command('meta', me.parse, "<subcommand>")
+    # info is an alias for 'meta list'
+    c.add_command('info', me.list, "", alias=["--info"])
 
     configure_datastore()
 

@@ -35,8 +35,8 @@ class Person:
     def __init__(self):
         self.c = command.CommandOptions('person')
         self.c.add_command('list', self.list, "[all | disabled | enabled]")
-        self.c.add_command('add', self.add, """<first> <last> [role] [enabled]
- [start-date] [end-date]""")
+        self.c.add_command('add', self.add, "<first> <last> [role] [enabled]"
+                           " [start-date] [end-date]")
         self.c.add_command('enable', self.enable, "<searchstr> <enabled>")
         self.c.add_command('delete', self.delete, "(<first> <last> | <nick>)")
         self.c.add_command('find', self.find, "<search-string>")
@@ -210,12 +210,15 @@ class Person:
             first, last, role, enabled, start_date, end_date = args
 
         # Need to do some data validation/conversion
-        if enabled in ["true", "True"]:
-            enabled = True
-        elif enabled in ["false", "False"]:
-            enabled = False
+        enabled = utils.sanitise_bool(enabled)
 
         ds = datastore.get_datastore()
+        fullname = ds.build_fullname(first, last)
+        if ds.person_exists(fullname):
+            print("*** Person '{}' already exists, no changes made".format
+                  (fullname))
+            return
+
         ds.new_person(first, last, role, bool(enabled), start_date, end_date)
 
     @debugging.trace

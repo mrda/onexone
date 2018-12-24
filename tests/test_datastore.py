@@ -38,7 +38,8 @@ class TestDataStore(unittest.TestCase):
         self.ds.ds = {
                      'info': {
                              'version': '9.3.6',
-                             'name': fn,
+                             'filename': fn,
+                             'last_modified': 'dontcare',
                              },
                      'people': {},
                      }
@@ -164,7 +165,7 @@ class TestDataStore(unittest.TestCase):
         else:
             builtin_module_name = '__builtin__'
 
-        mock_data = '{"info": {"version": "1.6.0"}}'
+        mock_data = {"info": {"version": "1.6.0"}}
         test_filename = 'rabbit'
 
         self.ds.ds = mock_data
