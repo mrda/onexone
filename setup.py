@@ -38,8 +38,8 @@ setup(
     description='Michael\'s 1x1 helper',
     entry_points={
         'console_scripts': [
-	    'onexone = onexone.main:main'
-	],
+        'onexone = onexone.main:main'
+    ],
     },
     install_requires=requirements,
     license="GNU General Public License v3",
@@ -52,6 +52,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/mrda/onexone',
-    version='0.2.0',
+    version='0.3.0',
     zip_safe=False,
     )

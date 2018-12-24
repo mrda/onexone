@@ -54,6 +54,7 @@ class DataStore:
     _END_DATE = 'end_date'
     _FILENAME = 'filename'
     _VERSION = 'version'
+    _LAST_MODIFIED = 'last_modified'
 
     required_fields = (
         _META,
@@ -69,6 +70,10 @@ class DataStore:
         _END_DATE,
     )
 
+    unupdateable_fields = (
+        _LAST_MODIFIED,
+    )
+
     # Note(mrda): Need to force booleans to be displayed as strings, so that
     # 'True' is printed instead of '1'.
     _all_format = "{:>15} {:>15} {!s:>15} {:>15}"
@@ -77,13 +82,14 @@ class DataStore:
                    _INFO: {
                        _VERSION: '',
                        _FILENAME: '',
+                       _LAST_MODIFIED: '',
                           },
                    _PEOPLE: {},
                    }
 
     _ds_version = {
         'major': 1,
-        'minor': 2,
+        'minor': 3,
         'patch': 0,
     }
 
@@ -105,6 +111,23 @@ class DataStore:
         if last is not None:
             fullname += last
         return fullname
+
+    # notested
+    def meta_key_exists(self, key):
+        return key in self.ds[self._INFO]
+
+    # notested
+    def update_meta(self, key, val):
+        self.ds[self._INFO][key] = val
+        self.save(self.filename)
+
+    # notested
+    def get_meta_key(self, key):
+        return self.ds[self._INFO].get(key, None)
+
+    # notested
+    def person_exists(self, fullname):
+        return fullname in self.ds[self._PEOPLE]
 
     # notested
     def new_person(self, first, last, role, enabled, start_date, end_date):
@@ -182,18 +205,31 @@ class DataStore:
         return keys
 
     @debugging.trace
-    def iterate_over_persons(self, func, enable_state):
+    def iterate(self, func):
+        """Iterate over the top-level structure.
+
+        :param func: The function to invoke
+        """
+        for elem in self.ds:
+            func(elem)
+
+    @debugging.trace
+    def iterate_over_info(self, func):
+        """Iterate over all info fields, invoking func.
+
+        :param func: The function to invoke, which takes a key/value pair
+        """
+        for key, val in sorted(self.ds[self._INFO].items()):
+            func(key, val)
+
+    @debugging.trace
+    def iterate_over_persons(self, func, enable_state=None):
         """Iterate over all persons, invoking func.
 
         :param func: The function to invoke, which takes a fullname as a param
         :param enable_state: one of None, 'enable', 'disable'
         """
         for fullname in sorted(self.ds[self._PEOPLE].keys()):
-            # Iterate over all entries
-            # if enable_state is None:
-            #     func(fullname)
-            #     continue
-            # Iterate over only enable or disable persons
             if enable_state == 'enable':
                 enable = True
             elif enable_state == 'disable':
@@ -225,6 +261,8 @@ class DataStore:
         return self.ds[key][self._MEETINGS]
 
     def save(self, filename):
+        self.ds[self._INFO][self._LAST_MODIFIED] = \
+            datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')
         with open(filename, "w") as f:
             json.dump(self.ds, f, indent=4)
 
@@ -347,6 +385,10 @@ class DataStore:
         if person_idxs:
             return person_idxs
         return None
+
+    # notested
+    def meeting_exists(self, fullname, meeting):
+        return meeting in self.ds[self._PEOPLE][fullname][self._MEETINGS]
 
     # nottested
     def add_meeting(self, person, meeting_date):

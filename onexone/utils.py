@@ -68,11 +68,6 @@ def display_program_header(args=None):
     print(get_program_header())
 
 
-def display_program_info(args=None):
-    print(get_program_header())
-    print("Save file location: {}".format(get_data_filename()))
-
-
 def validate_date(datestr, expected="%Y%m%d"):
     try:
         dateobj = datetime.datetime.strptime(datestr, expected)
@@ -86,3 +81,11 @@ def format_string(yyyymmdd):
         return ""
     return "{:4s}-{:2s}-{:2s}".format(yyyymmdd[0:4], yyyymmdd[4:6],
                                       yyyymmdd[6:8])
+
+
+def sanitise_bool(string):
+    string = string.lower()
+    if string == 'true':
+        return True
+    elif string == 'false':
+        return False
