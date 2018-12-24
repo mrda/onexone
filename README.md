@@ -30,11 +30,18 @@ The build system will automatically determine if python3 is available, and if so
 * `onexone person enable <searchstrst> <enabled>` - Enable or disable a person
 * `onexone person find <search-str>` - Search and find a person
 * `onexone person info <search-str>` - Display all info about a person
-* `onexone person list [all]` - Display all people managed by onexone, optionally displaying everything about them.
+* `onexone person list [all | disabled | enabled]` - Display all people managed by onexone, allowing you to filter by enabled state.
 
 * `onexone meeting add <person> <date>` - Add a One-on-One meeting to a person
 * `onexone meeting delete <person> <date>` - Delete a One-on-One meeting from a person
 * `onexone meeting up-next` - Display the order of people to have a One-on-One meeting with
+
+### Advanced CLI Usage
+
+* `onexone meta list` - Display program configuration data
+* `onexone meta update [key] [vale]` - Updatep rogram configuration data
+* `onexone info` - this is an alias for `onexone meta list`
+* `onexone replay build` - Build and dump to STDOUT a replay file
 
 ## Help
 
