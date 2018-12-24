@@ -33,13 +33,21 @@ _onexone_complete()
     COMPREPLY=( $(compgen -W "$MAINOPTS" -- $CUR) )
   elif [ $COMP_CWORD -eq 2 ]; then
     case "$PREV" in
+      "meta")
+        OPTS=$(onexone meta --list-opts)
+        COMPREPLY=( $(compgen -W "$OPTS" -- $CUR) )
+        ;;
       "meeting")
-        MEETINGOPTS=$(onexone meeting --list-opts)
-        COMPREPLY=( $(compgen -W "$MEETINGOPTS" -- $CUR) )
+        OPTS=$(onexone meeting --list-opts)
+        COMPREPLY=( $(compgen -W "$OPTS" -- $CUR) )
         ;;
       "person")
-        PERSONOPTS=$(onexone person --list-opts)
-        COMPREPLY=( $(compgen -W "$PERSONOPTS" -- $CUR) )
+        OPTS=$(onexone person --list-opts)
+        COMPREPLY=( $(compgen -W "$OPTS" -- $CUR) )
+        ;;
+      "replay")
+        OPTS=$(onexone replay --list-opts)
+        COMPREPLY=( $(compgen -W "$OPTS" -- $CUR) )
         ;;
       *)
         ;;
