@@ -40,8 +40,8 @@ The build system will automatically determine if python3 is available, and if so
 ### Advanced CLI Usage
 
 * `onexone meta list` - Display program configuration data
-* `onexone meta update [key] [vale]` - Updatep rogram configuration data
-* `onexone info` - this is an alias for `onexone meta list`
+* `onexone meta update <key> <value>` - Update program configuration data
+* `onexone info` - deprecated: an alias for `onexone meta list`
 * `onexone replay build` - Build and dump to STDOUT a replay file
 
 ## Help
