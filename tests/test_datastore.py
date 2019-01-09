@@ -16,13 +16,15 @@ else:
 
 class TestDataStore(unittest.TestCase):
 
-    def _make_person(self, fullname, firstname, lastname, enabled):
+    def _make_person(self, fullname, firstname, lastname, start_date,
+                     end_date=None):
         # Test helper function
         person = {
                  'meta': {
                          'first_name': firstname,
                          'last_name': lastname,
-                         'enabled': enabled,
+                         'start_date': start_date,
+                         'end_date': end_date,
                          },
                  'meetings': [],
                  }
@@ -43,15 +45,15 @@ class TestDataStore(unittest.TestCase):
                              },
                      'people': {},
                      }
-        self._make_person('JohnCitizen', 'John', 'Citizen', True)
+        self._make_person('JohnCitizen', 'John', 'Citizen', '20180101')
         self._add_meetings('JohnCitizen', ['20181003'])
 
-        self._make_person('JaneSmith', 'Jane', 'Smith', False)
+        self._make_person('JaneSmith', 'Jane', 'Smith', '20180101', '20180307')
         self._add_meetings('JaneSmith', ['20180907', '20181003'])
 
-        self._make_person('CarlosSmith', 'Carlos', 'Smith', True)
+        self._make_person('CarlosSmith', 'Carlos', 'Smith', '20180101')
 
-        self._make_person('FredFlintstone', 'Fred', 'Flintstone', True)
+        self._make_person('FredFlintstone', 'Fred', 'Flintstone', '20180101')
 
     # Tests for version functions
     def test_version(self):
@@ -117,15 +119,6 @@ class TestDataStore(unittest.TestCase):
     def test_is_enabled_exception(self):
         self.assertRaises(KeyError, self.ds.is_enabled, 'RupertHumperdink')
 
-    @mock.patch('onexone.datastore.DataStore.save', create=True)
-    def test_set_enabled(self, mock_save):
-        self.assertFalse(self.ds.is_enabled('JaneSmith'))
-        self.ds.set_enabled('JaneSmith')
-        mock_save.called_once()
-        self.assertTrue(self.ds.is_enabled('JaneSmith'))
-        self.ds.set_enabled('JaneSmith', False)
-        self.assertFalse(self.ds.is_enabled('JaneSmith'))
-
     def test_find_match_single(self):
         self.assertEqual(['JohnCitizen'], self.ds.find('first_name', 'John'))
 
@@ -136,14 +129,6 @@ class TestDataStore(unittest.TestCase):
         six.assertCountEqual(self,
                              ['JaneSmith', 'CarlosSmith'],
                              self.ds.find('last_name', 'Smith'))
-
-    def test_find_match_enabled_false(self):
-        self.assertEqual(['JaneSmith'], self.ds.find('enabled', False))
-
-    def test_find_match_enabled_true(self):
-        six.assertCountEqual(self,
-                             ['JohnCitizen', 'CarlosSmith', 'FredFlintstone'],
-                             self.ds.find('enabled', True))
 
     # Test for get_all_fullnames
     def test_get_all_fullnames(self):

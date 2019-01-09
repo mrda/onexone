@@ -32,13 +32,12 @@ class TestMySanity(unittest.TestCase):
     @mock.patch('onexone.datastore.DataStore.save', create=True)
     @mock.patch('onexone.datastore.DataStore.load', create=True)
     def test_add_person(self, mock_load, mock_save):
-        self.p.add(['Freddy', 'Nerks', 'Developer', 'True', '20170701',
+        self.p.add(['Freddy', 'Nerks', 'Developer', '20170701',
                    '20180801'])
         freddy = self.ds.ds['people']['FreddyNerks']
         self.assertEqual('Freddy', freddy['meta']['first_name'])
         self.assertEqual('Nerks', freddy['meta']['last_name'])
         self.assertEqual('Developer', freddy['meta']['role'])
-        self.assertTrue(freddy['meta']['enabled'])
         self.assertEqual('20170701', freddy['meta']['start_date'])
         self.assertEqual('20180801', freddy['meta']['end_date'])
 
@@ -47,7 +46,7 @@ class TestMySanity(unittest.TestCase):
     @mock.patch('onexone.datastore.DataStore.load', create=True)
     def test_delete_person(self, mock_load, mock_save, mock_input):
         mock_input.return_value = 'y'
-        self.p.add(['Freddy', 'Nerks', 'Developer', 'True', '20170701',
+        self.p.add(['Freddy', 'Nerks', 'Developer', '20170701',
                    '20180801'])
         self.assertTrue('FreddyNerks' in self.ds.ds['people'])
         self.p.delete(['Freddy', 'Nerks'])
@@ -57,18 +56,6 @@ class TestMySanity(unittest.TestCase):
         # This function just prints things to the screen.
         # No sanity test provided
         pass
-
-    @mock.patch('onexone.datastore.DataStore.save', create=True)
-    @mock.patch('onexone.datastore.DataStore.load', create=True)
-    def test_enable_person(self, mock_load, mock_save):
-        self.p.add(['Freddy', 'Nerks', 'Developer', 'True', '20170701',
-                   '20180801'])
-        self.assertTrue(self.ds.ds['people']['FreddyNerks']['meta']['enabled'])
-        self.p.enable(['Nerks', 'False'])
-        self.assertFalse(self.ds.ds['people']['FreddyNerks']
-                         ['meta']['enabled'])
-        self.p.enable(['Nerks', 'True'])
-        self.assertTrue(self.ds.ds['people']['FreddyNerks']['meta']['enabled'])
 
     def test_find_person(self):
         # This function just prints things to the screen.
@@ -81,7 +68,7 @@ class TestMySanity(unittest.TestCase):
     def test_info_person(self, mock_load, mock_save, mock_pp):
         # Important to reininitialise self.p so we can mock _print_person
         self.p = onexone.person.Person()
-        self.p.add(['Freddy', 'Nerks', 'Developer', 'True', '20170701',
+        self.p.add(['Freddy', 'Nerks', 'Developer', '20170701',
                    '20180801'])
         self.p.info(['Nerks'], False)
         mock_pp.assert_called_once_with('FreddyNerks')
