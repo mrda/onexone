@@ -22,10 +22,11 @@
 NOSE=nosetests
 VENV = ./venv
 GUESS_PY=$(shell ./scripts/guess-python.sh)
+GIT_CHANGES=$(shell git ls-files -m)
 
 .PHONY: all check-env check develop tests clean python install uninstall cover
 
-all: check-env check develop tests
+all: check-env check develop tests changes
 
 # Building the environment is dependent upon which verson of python
 # we'll use.  We prefer python3 if it is available
@@ -57,11 +58,11 @@ python:
 
 check-env: $(VENV)
 	@if [ "z$(VIRTUAL_ENV)" = "z" ]; then \
-            printf "\nPlease start your virtualenv first,\nlike this "; \
-            printf "'. $(VENV)/bin/activate'\n"; \
-            printf "Then enter your 'make' command again\n\n"; \
-            exit 1; \
-        else true; fi
+        printf "\nPlease start your virtualenv first,\nlike this "; \
+        printf "'. $(VENV)/bin/activate'\n"; \
+        printf "Then enter your 'make' command again\n\n"; \
+        exit 1; \
+    else true; fi
 	pip install -Ur requirements.txt
 
 check: check-env
@@ -78,6 +79,13 @@ uninstall:
 
 tests: check-env
 	${NOSE} -s --with-coverage --cover-branches --cover-erase --cover-html --cover-package=onexone
+
+changes:
+	@if [ ! "z$(GIT_CHANGES)" = "z" ]; then \
+        printf "\n*** You have modified files in this repository.\n"; \
+        printf "*** Before commiting these changes, have you upped the version\n"; \
+        printf "*** identifiers in setup.py and onexone/datastore.py ?\n\n"; \
+    else true; fi
 
 cover:
 	xdg-open cover/index.html
