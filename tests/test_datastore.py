@@ -39,7 +39,7 @@ class TestDataStore(unittest.TestCase):
         self.ds = onexone.datastore.get_datastore(fn)
         self.ds.ds = {
                      'info': {
-                             'version': '9.3.6',
+                             'file_format_version': '9.3.6',
                              'filename': fn,
                              'last_modified': 'dontcare',
                              },

@@ -18,7 +18,11 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 # 02111-1307, USA.
-#
+
+# NOTE: When updating what is stored on disk, the file format version
+# identifier in _ds_version should be updated.  We're using semver
+# conventions here.  See https://semver.org
+
 import datetime
 import json
 import os
@@ -53,7 +57,7 @@ class DataStore:
     _START_DATE = 'start_date'
     _END_DATE = 'end_date'
     _FILENAME = 'filename'
-    _VERSION = 'version'
+    _VERSION = 'file_format_version'
     _LAST_MODIFIED = 'last_modified'
 
     required_fields = (
@@ -86,9 +90,11 @@ class DataStore:
                    _PEOPLE: {},
                    }
 
+    # Note: This is the version number of the file format used by onexone
+    # This should be incremented when the on-disk file format changes
     _ds_version = {
         'major': 1,
-        'minor': 3,
+        'minor': 4,
         'patch': 0,
     }
 
