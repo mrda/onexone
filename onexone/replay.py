@@ -59,11 +59,10 @@ class Replay:
             start_date = ""
         if end_date is None:
             end_date = ""
-        print("onexone person add '{}' '{}' '{}' {} {} {}".format(
+        print("onexone person add '{}' '{}' '{}' {} {}".format(
               ds.get_first_name(fullname),
               ds.get_last_name(fullname),
               ds.get_role(fullname),
-              ds.get_enabled(fullname),
               start_date,
               end_date))
         meetings = ds.get_meetings(fullname)
