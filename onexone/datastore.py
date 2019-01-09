@@ -130,12 +130,15 @@ class DataStore:
 
     # notested
     def update_person(self, fullname, key, val):
+        # TODO: Should be returning back errors and not printing them here
         if fullname not in self.ds[self._PEOPLE]:
             print("*** Can't find '{}' to update".format(fullname))
             return
         if key not in self.ds[self._PEOPLE][fullname][self._META]:
             print("*** Can't find '{}' in person '{}' to update".format
                   (key, fullname))
+            print("*** Valid fields are: {}".format(", ".join(
+                  sorted(self.ds[self._PEOPLE][fullname][self._META].keys()))))
             return
 
         # TODO: Validate 'val' for date type etc
@@ -441,7 +444,8 @@ class DataStore:
         :param meeting_date: the date of the meeting
         :returns: the success of the addition
         """
-        # TODO(mrda): validate meeting_date
+        # TODO: validate meeting_date
+        # TODO: Should be returning back errors and not printing them here
         all_meeting_dates = self.ds[self._PEOPLE][person][self._MEETINGS]
         if meeting_date not in all_meeting_dates:
             print("Couldn't find {} in {}'s list of meetings".
