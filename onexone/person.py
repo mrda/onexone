@@ -32,13 +32,15 @@ from onexone import utils
 class Person:
     """Representation of a person."""
 
+    _ES_ENABLE = 'enable'
+    _ES_DISABLE = 'disable'
+
     def __init__(self):
         self.c = command.CommandOptions('person')
         self.c.add_command('list', self.list, "[all | disabled | enabled]")
-        self.c.add_command('add', self.add, "<first> <last> [role] [enabled]"
-                           " [start-date] [end-date]")
+        self.c.add_command('add', self.add, "<first> <last> <role>"
+                           "<start-date> [end-date]")
         self.c.add_command('edit', self.edit, "<searchstr> <key> <value>")
-        self.c.add_command('enable', self.enable, "<searchstr> <enabled>")
         self.c.add_command('delete', self.delete, "(<first> <last>|<nick>)")
         self.c.add_command('find', self.find, "<search-string>")
         self.c.add_command('info', self.info, "<search-string>")
@@ -214,29 +216,16 @@ class Person:
         :param args: list of arguments to use in building a person
         """
         len_args = len(args)
-        if len_args < 2 or len_args > 6:
+        if len_args < 4 or len_args > 5:
             self.c.display_usage('add')
             return
 
-        role = ""
-        start_date = ""
         end_date = ""
 
-        if len_args == 2:
-            first, last = args
-            enabled = True
-        elif len_args == 3:
-            first, last, role = args
-            enabled = True
-        elif len_args == 4:
-            first, last, role, enabled = args
+        if len_args == 4:
+            first, last, role, start_date = args
         elif len_args == 5:
-            first, last, role, enabled, start_date = args
-        elif len_args == 6:
-            first, last, role, enabled, start_date, end_date = args
-
-        # Need to do some data validation/conversion
-        enabled = utils.sanitise_bool(enabled)
+            first, last, role, start_date, end_date = args
 
         ds = datastore.get_datastore()
         fullname = ds.build_fullname(first, last)
@@ -245,7 +234,7 @@ class Person:
                   (fullname))
             return
 
-        ds.new_person(first, last, role, bool(enabled), start_date, end_date)
+        ds.new_person(first, last, role, start_date, end_date)
 
     @debugging.trace
     def delete(self, args):
@@ -301,9 +290,9 @@ class Person:
         elif len_args == 1 and args[0] == 'all':
             self.list_everything()
         elif len_args == 1 and args[0] == 'enabled':
-            self.list_everything(enable_state='enable')
+            self.list_everything(enable_state=self._ES_ENABLE)
         elif len_args == 1 and args[0] == 'disabled':
-            self.list_everything(enable_state='disable')
+            self.list_everything(enable_state=self._ES_DISABLE)
         else:
             self.c.display_usage('list')
 
@@ -317,11 +306,10 @@ class Person:
             a = []
             a.append("First Name")
             a.append("Last Name")
-            if enable_state is None:
-                a.append("Enabled?")
             a.append("Role")
             a.append("Start Date")
-            a.append("End Date")
+            if enable_state != self._ES_ENABLE:
+                a.append("End Date")
             a.append("Meetings")
             return a
 
@@ -336,12 +324,11 @@ class Person:
             a = []
             a.append(_sanitise(ds.get_first_name(fullname)))
             a.append(_sanitise(ds.get_last_name(fullname)))
-            if enable_state is None:
-                a.append(_sanitise(ds.get_enabled(fullname)))
             a.append(_sanitise(ds.get_role(fullname)))
             dates = ds.get_dates(fullname)
             a.append(utils.format_string(_sanitise(dates[0])))
-            a.append(utils.format_string(_sanitise(dates[1])))
+            if enable_state != self._ES_ENABLE:
+                a.append(utils.format_string(_sanitise(dates[1])))
             meetings = ds.get_meetings(fullname)
             if len(meetings) < 2:
                 a.append(", ".join(utils.format_string(m) for m in meetings))
@@ -357,39 +344,6 @@ class Person:
             table.align[h] = 'l'  # left align
         ds.iterate_over_persons(_print_person, enable_state)
         print(table)
-
-    @debugging.trace
-    def enable(self, args):
-        """Top level function to enable/disable a person.
-
-        :param args: only two params are supported a person and enabled
-        """
-        len_args = len(args)
-        if len_args != 2:
-            self.c.display_usage('enable')
-            return
-
-        person = args[0]
-        fullnames = self._find(args[0])
-        if len(fullnames) == 0:
-            print("Couldn't find person '{}' to enable".format(person))
-            return
-        elif len(fullnames) != 1:
-            print("Multiple matches, won't enable {}".format(
-                  " and ".join(fullnames)))
-            return
-
-        enabled = str(args[1]).lower()
-        if enabled == 'true':
-            enabled = True
-        elif enabled == 'false':
-            enabled = False
-        else:
-            self.c.display_usage('enable')
-            return
-
-        ds = datastore.get_datastore()
-        ds.set_enabled(fullnames[0], enabled)
 
     @debugging.trace
     def parse(self, args):

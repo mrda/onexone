@@ -50,7 +50,6 @@ class DataStore:
     _LAST = 'last_name'
     _ROLE = 'role'
     _MEETINGS = 'meetings'
-    _ENABLED = 'enabled'
     _START_DATE = 'start_date'
     _END_DATE = 'end_date'
     _FILENAME = 'filename'
@@ -63,7 +62,6 @@ class DataStore:
     )
 
     required_meta_fields = (
-        _ENABLED,
         _FIRST,
         _LAST,
         _ROLE,
@@ -149,7 +147,7 @@ class DataStore:
         self.save(self.filename)
 
     # notested
-    def new_person(self, first, last, role, enabled, start_date, end_date):
+    def new_person(self, first, last, role, start_date, end_date):
         """Add a new person.
 
         :param first: the person's first name
@@ -157,11 +155,9 @@ class DataStore:
         :param role: the person's role
         :param start_date: the person's start_date
         :param end_date: the person's end_date
-        :param enabled: whether the individual is enabled
         """
         person = {}
         person[self._META] = {}
-        person[self._META][self._ENABLED] = enabled
         person[self._META][self._FIRST] = first
         person[self._META][self._LAST] = last
         person[self._META][self._ROLE] = role
@@ -212,16 +208,21 @@ class DataStore:
         return self.ds[self._INFO][self._VERSION]
 
     def list_fullnames(self, enabled=True):
-        keys = set()
-        for key in sorted(self.ds[self._PEOPLE].keys()):
-            if self.ds[self._PEOPLE][key][self._META][self._ENABLED] == \
-               enabled:
-                keys.add(key)
+        all_fullnames = set()
+        for fullname in sorted(self.ds[self._PEOPLE].keys()):
+            ed = self.ds[self._PEOPLE][fullname][self._META][self._END_DATE]
+            if enabled:
+                if self.is_enabled(fullname):
+                    all_fullnames.add(fullname)
+            else:
+                # We want disabled persons
+                if not self.is_enabled(fullname):
+                    all_fullnames.add(fullname)
 
-        if len(keys) == 0:
+        if len(all_fullnames) == 0:
             return None
 
-        return keys
+        return all_fullnames
 
     @debugging.trace
     def iterate(self, func):
@@ -248,17 +249,29 @@ class DataStore:
         :param func: The function to invoke, which takes a fullname as a param
         :param enable_state: one of None, 'enable', 'disable'
         """
+
+        # If we supply an enable_state, that will be honoured
+        # If we don't supply an enable_state, invoke the function anyways
+
+        if enable_state is None or enable_state == 'enable':
+            enable = True
+        elif enable_state == 'disable':
+            enable = False
+
         for fullname in sorted(self.ds[self._PEOPLE].keys()):
-            if enable_state == 'enable':
-                enable = True
-            elif enable_state == 'disable':
-                enable = False
-            else:
-                enable = None
-            if (enable is None or
-                self.ds[self._PEOPLE][fullname][self._META]
-                    [self._ENABLED] is enable):
+            if enable_state is None:
                 func(fullname)
+            else:
+                ed = (self.ds[self._PEOPLE][fullname][self._META]
+                             [self._END_DATE])
+                if enable_state == 'enable':
+                    # Only want persons who don't have an end date
+                    if self.is_enabled(fullname):
+                        func(fullname)
+                else:
+                    # Only want persons who do have an end date
+                    if not self.is_enabled(fullname):
+                        func(fullname)
 
     def is_enabled(self, fullname):
         """Check to see if a person is enabled.
@@ -266,11 +279,8 @@ class DataStore:
         :param fullname: the name to check
         :returns: Return true if the person is enabled
         """
-        return self.ds[self._PEOPLE][fullname][self._META][self._ENABLED]
-
-    def set_enabled(self, fullname, enabled=True):
-        self.ds[self._PEOPLE][fullname][self._META][self._ENABLED] = enabled
-        self.save(self.filename)
+        ed = self.ds[self._PEOPLE][fullname][self._META][self._END_DATE]
+        return ed is None or ed == ""
 
     def get_all_fullnames(self):
         """Return all fullnames as a list."""
@@ -368,9 +378,10 @@ class DataStore:
     @debugging.trace
     def get_enabled(self, fullname):
         try:
-            return self.ds[self._PEOPLE][fullname][self._META][self._ENABLED]
+            return (not self.ds[self._PEOPLE][fullname][self._META]
+                               [self._END_DATE])
         except KeyError:
-            return None
+            return False
 
     # nottested
     @debugging.trace
