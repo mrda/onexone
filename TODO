@@ -1,19 +1,18 @@
 Bugs
 ----
-Fix meetings and up-next
+None right now (◔_◔) :-)
 
-New Functionalituy to add
--------------------------
+New Functionality
+-----------------
 Add more tests
 Add backup rotations
 Add date validation logic
 Add duplicate date detection & prevention
-Add deplicate person detection & prevention
+Add duplicate person detection & prevention
 Add person nicknames, which are searchable/specifiable for cmdline operations
 Add actions for each meeting - date/who/what/status
 Add action completion/status update
 Add meeting deletion
-Add the ability to convert the stored data into onexone commandlines (for replayability)
 Add stats for how long between meetings/how many meetings per person etc
 Add exclusion days for people (i.e. Tash doesn't work Wednesdays)
 Take the next step with up-next, and build a 'schedule' command that takes the next 'n' people, and schedule them on workdays
@@ -21,3 +20,5 @@ Add an 'action' subcommand to manipulate actions
 Add datafile version, which is examined on load, and migrations can occur if required
 Move README.md to README.rst
 Add HISTORY.rst
+Add a 'remindme' function that reminds me of work anniversaries, and due dates on open action items
+Add a web service capability for syncing data to a remote (backup) server
