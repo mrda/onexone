@@ -1,0 +1,6 @@
+__author__ = 'Michael Davies'
+__author_email__ = 'michael@the-davies.net'
+__name__ = 'onexone'
+__repo__ = 'https://github.com/mrda/onexone'
+__description__ = 'onexeone - helping you herd the cats'
+__version__ = '0.4.0'

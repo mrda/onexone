@@ -18,7 +18,5 @@ Add exclusion days for people (i.e. Tash doesn't work Wednesdays)
 Take the next step with up-next, and build a 'schedule' command that takes the next 'n' people, and schedule them on workdays
 Add an 'action' subcommand to manipulate actions
 Add datafile version, which is examined on load, and migrations can occur if required
-Move README.md to README.rst
-Add HISTORY.rst
 Add a 'remindme' function that reminds me of work anniversaries, and due dates on open action items
 Add a web service capability for syncing data to a remote (backup) server

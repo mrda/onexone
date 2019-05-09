@@ -2,7 +2,7 @@
 #
 # onexone main.py - the main entry point for OneXOne
 #
-# Copyright (C) 2018 Michael Davies <michael@the-davies.net>
+# Copyright (C) 2018-2019 Michael Davies <michael@the-davies.net>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -19,7 +19,7 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 # 02111-1307, USA.
 #
-import appdirs
+
 import errno
 import pathlib
 import sys
@@ -32,6 +32,7 @@ from onexone import meeting
 from onexone import meta
 from onexone import person
 from onexone import replay
+from onexone import template
 from onexone import utils
 
 
@@ -39,7 +40,7 @@ from onexone import utils
 def configure_datastore():
     # Initialise the location for stored data
     try:
-        pathlib.Path(utils.get_config_dir()).mkdir(parents=True)
+        pathlib.Path(utils.get_user_config_dir()).mkdir(parents=True)
     except OSError as e:
         # Allow directory already exists to be squashed.
         # Otherwise allow it to bubble up
@@ -52,7 +53,13 @@ def main():
 
     APP_NAME = 'onexone'
     utils.register_name(APP_NAME)
-    utils.register_years("2018")
+    utils.register_years("2018-2019")
+
+    if debugging._debug:
+        print("User config dir: {}".format(utils.get_user_config_dir()))
+        print("Site config dir: {}".format(utils.get_site_config_dir()))
+        print("User data dir: {}".format(utils.get_user_data_dir()))
+        print("Site data dir: {}".format(utils.get_site_data_dir()))
 
     c = command.CommandOptions(debug=debugging._debug)
 
@@ -72,6 +79,9 @@ def main():
 
     r = replay.Replay()
     c.add_command('replay', r.parse, "<subcommand>")
+
+    t = template.Template()
+    c.add_command('template', t.parse, "<subcommand>")
 
     me = meta.Meta()
     c.add_command('meta', me.parse, "<subcommand>")

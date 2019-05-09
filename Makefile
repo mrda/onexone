@@ -1,7 +1,7 @@
 #
 # onexone top-level Makefile
 #
-# Copyright (C) 2018 Michael Davies <michael@the-davies.net>
+# Copyright (C) 2018-2019 Michael Davies <michael@the-davies.net>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -84,7 +84,7 @@ changes:
 	@if [ ! "z$(GIT_CHANGES)" = "z" ]; then \
         printf "\n*** You have modified files in this repository.\n"; \
         printf "*** Before commiting these changes, have you upped the version\n"; \
-        printf "*** identifiers in setup.py and onexone/datastore.py ?\n\n"; \
+        printf "*** identifier in project_metadata.py ?\n\n"; \
     else true; fi
 
 cover:

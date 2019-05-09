@@ -1,16 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import appdirs
 from setuptools import setup, find_packages
+from distutils.util import convert_path
 
-readme = ""
-#with open('README.rst') as readme_file:
-#    readme = readme_file.read()
-#
+main_ns = {}
+ver_path = convert_path('project_metadata.py')
+with open(ver_path) as ver_file:
+    exec(ver_file.read(), main_ns)
 
-history = ""
-#with open('HISTORY.rst') as history_file:
-#    history = history_file.read()
+with open('README.rst') as readme_file:
+    readme = readme_file.read()
+
+with open('HISTORY.rst') as history_file:
+    history = history_file.read()
 
 requirements = [ ]
 
@@ -18,10 +22,11 @@ setup_requirements = [ ]
 
 test_requirements = [ ]
 
+data_files = ['data/meeting_invite.txt', 'data/request_for_feedback.txt']
 
 setup(
-    author="Michael Davies",
-    author_email='michael@the-davies.net',
+    author=main_ns['__author__'],
+    author_email=main_ns['__author_email__'],
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
@@ -35,23 +40,24 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
     ],
-    description='Michael\'s 1x1 helper',
+    description=main_ns['__description__'],
     entry_points={
         'console_scripts': [
-        'onexone = onexone.main:main'
+        '{} = {}.main:main'.format(main_ns['__name__'], main_ns['__name__'])
     ],
     },
     install_requires=requirements,
     license="GNU General Public License v3",
     long_description=readme + '\n\n' + history,
     include_package_data=True,
-    keywords='onexone',
-    name='onexone',
-    packages=find_packages(include=['onexone']),
+    keywords=main_ns['__name__'],
+    name=main_ns['__name__'],
+    packages=find_packages(include=[main_ns['__name__']]),
+    data_files=[(appdirs.site_data_dir(main_ns['__name__'], 'dontcare'), data_files)],
     setup_requires=setup_requirements,
     test_suite='tests',
     tests_require=test_requirements,
-    url='https://github.com/mrda/onexone',
-    version='0.3.2',
+    url=main_ns['__repo__'],
+    version=main_ns['__version__'],
     zip_safe=False,
     )

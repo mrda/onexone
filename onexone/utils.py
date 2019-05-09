@@ -2,7 +2,7 @@
 #
 # utils - common python package functions
 #
-# Copyright (C) 2018 Michael Davies <michael@the-davies.net>
+# Copyright (C) 2018-2019 Michael Davies <michael@the-davies.net>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -26,6 +26,7 @@ import pkg_resources
 
 _name = "undefined"
 _years = "undefined"
+_user = os.environ.get('USER')
 
 
 def register_name(name):
@@ -42,22 +43,39 @@ def get_program_header():
     global _name, _years
     c = "Copyright (C) {} Michael Davies <michael-{}@the-davies.net>".format(
         _years, _name)
-    return "{} Version {}  {}".format(_name,
+    return "{} Version {}\n{}".format(_name,
                                       pkg_resources.require("onexone")[0]
                                       .version,
                                       c)
 
 
-def get_config_dir():
+def get_user_config_dir():
     global _name
-    user = os.environ.get('USER')
-    config_dir = appdirs.user_config_dir(_name, user)
+    config_dir = appdirs.user_config_dir(_name, _user)
     return config_dir
+
+
+def get_site_config_dir():
+    global _name
+    config_dir = appdirs.site_config_dir(_name, _user)
+    return config_dir
+
+
+def get_user_data_dir():
+    global _name
+    data_dir = appdirs.user_data_dir(_name, _user)
+    return data_dir
+
+
+def get_site_data_dir():
+    global _name
+    data_dir = appdirs.site_data_dir(_name, _user)
+    return data_dir
 
 
 def get_data_filename():
     global _name
-    config_dir = get_config_dir()
+    config_dir = get_user_config_dir()
     save_file = "{}-data.json".format(_name)
     data_filename = os.path.join(config_dir, save_file)
     return data_filename
