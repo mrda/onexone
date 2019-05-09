@@ -2,7 +2,7 @@
 [![License: GPL v3+](https://img.shields.io/badge/license-GPL%20v3%2B-blue.svg)](http://www.gnu.org/licenses/gpl-3.0)
 [![Build Status](https://travis-ci.com/mrda/onexone.svg?branch=master)](https://travis-ci.com/mrda/onexone)
 
-A simple command-line tool to help people managers herd the cats.
+A simple command-line tool to help people managers herd the cats
 
 ## Quick Start
 
